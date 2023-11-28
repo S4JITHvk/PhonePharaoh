@@ -373,7 +373,7 @@ const userProfile = async (req, res) => {
         order.Status = "Cancelled";
         order.PaymentStatus="Refund Completed"
         await order.save();
-        return res.redirect("/trackOrder");
+        return res.redirect("/trackOrder" );
       } else {
         console.log("Order cannot be cancelled");
        
