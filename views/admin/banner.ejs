@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/static/style/add-category.css">
+  <link rel="stylesheet" href="/static/style/admin-head.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+<%- include('../partials/admin-sample-nav.ejs') %>
+
+<style>
+    
+    .form-group input[type="text"],
+    .form-group input[type="file"] {
+        width: 100%; 
+        padding: 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 5px; 
+    }
+
+    .table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .table, .table th, .table td {
+        border: none;
+    }
+
+    .details .recentOrders table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.details .recentOrders table th, 
+.details .recentOrders table td {
+    padding: 10px;
+    text-align: center;
+}
+
+</style>
+
+<section>
+    <div class="container">
+<div class="details">
+    <div class="recentOrders">
+       
+        <div class="cardHeader">
+            <h1> Banner</h1>
+        </div>
+        <div id="bannerFormDiv" style="display: none;">
+            <form action="/admin/uploadBanner" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="title">Banner Title</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <br>
+            
+                <div class="form-group">
+                    <label for="product">Select Product</label>
+                    <select class="form-select" id="categoryName" name="productId" required>
+                        <option value="" disabled selected>Select a Product</option>
+                        <% Products.forEach((product) => { %>
+                            <option value="<%= product._id %> %>"><%= product.name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <br>
+            
+                <div class="form-group">
+                    <label for="image">Banner Image</label>
+                    <input type="file" id="image" name="image" accept=".jpg, .png, .jpeg, .svg" required>
+                </div>
+                <br>
+                <br>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-dark">Upload Banner</button>
+                </div>
+            </form>
+        </div>
+        
+           <button id="addBannerButton" class="btn btn-dark">Add Banner</button>
+            <br>
+             <br>
+            <div class="bannerlist">
+                <table class="table border-0">
+                    <thead>
+                       <tr>
+                        <th scope="col">Banner Title</th>
+                        <th scope="col">Banner Image</th>
+                        <th scope="col">Created Date</th>
+                        <th scope="col"> Delete </th>
+                       </tr>
+                    </thead>
+                    <tbody>
+                        <% banners.forEach(banner => { %>
+                            <tr>
+                                <td><%= banner.title %></td>
+                                <td><img src="/static/banner-images/<%= banner.image %>" alt="<%= banner.title %>" style="max-width: 300px;"></td>
+                                <td>
+                                     <% let dt=new Date(banner.updatedAt) %>
+                                     <%= dt.getDate()%>/<%= dt.getMonth()+1%>/<%= dt.getFullYear()%> %>
+                                 </td>
+                                 <td>
+                                    <a href="/admin/deleteBanner/<%= banner._id %>" onclick="return confirm('Are you sure you want to delete this banner?')">
+                                      <i class="fa-solid fa-trash fa-xl" style="color: #000714;"></i>
+                                    </a>
+                                  </td>
+                              
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+    </div>
+</section>
+<!-- Add this script at the end of your HTML body or in the head section -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#productSearchInput').on('input', function () {
+            var inputText = $(this).val().toLowerCase();
+            $('#productOptions option').each(function () {
+                var optionText = $(this).text().toLowerCase();
+                $(this).toggle(optionText.includes(inputText));
+            });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const formDiv = document.getElementById("bannerFormDiv");
+        const addButton = document.getElementById("addBannerButton");
+
+        addButton.addEventListener("click", function () {
+            // Toggle the visibility of the form div
+            formDiv.style.display = formDiv.style.display === "none" || formDiv.style.display === "" ? "block" : "none";
+        });
+    });
+
+</script>
+
+<%- include('../layouts/footer.ejs') %>

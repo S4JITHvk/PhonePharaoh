@@ -1,0 +1,126 @@
+<%- include('../partials/userHeader') %>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <!-- Add your CSS or stylesheets here -->
+    
+</head>
+<body>
+    
+    <br>
+<div class="bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Coupons</h1>
+            </div>
+           
+            <% coupon.forEach(coupon => { %>
+                <div class="col-md-3">
+                    <div class="coupon-card glow-on-hover shadow-lg ">
+                        <div class="coupon-image"  >
+                            <img src="/static/assets/coupon2.png" alt="" style="max-width: 100px; height: auto; ">
+                        </div>
+                        
+                        <div class="coupon-card-body">
+                            <h5 class="coupon-title"><%= coupon.description %></h5>
+                            <div class="coupon-details">
+                                <p>MinPurchaseAmount : Rs.<%= coupon.minPurchaseAmount %></p>
+                                <p style="color: red;">Discount : <%= coupon.discount %>%</p>
+                                <p>MaxdiscountAmount : Rs.<%= coupon. maxdiscountAmount %></p>
+                                <% if (new Date() < new Date(coupon.expiryDate)) { %>
+                                    <p class="card-text fw-bold">Expiry Date: <%= new Date(coupon.expiryDate).toLocaleDateString() %></p>
+                                    <div class="mt-2">
+                                        <a href="" class="use-button" data-coupon-code="<%= coupon.couponCode %>">Use</a>
+                                    </div>
+                                  <% } else { %>
+                                    <p class="card-text text-danger fw-bold">EXPIRED </p>
+                                    <div class="mt-2">
+                                        <a href="" class="btn" data-coupon-code="" ></a>
+                                    </div>
+                                  <% } %>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+          
+        </div>
+    </div>
+</br>
+</br>
+<style>
+    
+    .coupon-card {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin: 10px;
+        background-color: #fff;
+        height: 400px; 
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; 
+    }
+
+    .coupon-image {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .coupon-title {
+        font-size: 18px;
+        overflow: hidden; /* Hide overflowing content */
+        white-space: nowrap; /* Prevent text from wrapping */
+        text-overflow: ellipsis; /* Display ellipsis (...) for truncated text */
+    }
+
+    .coupon-details {
+        font-size: 16px;
+    }
+
+    .use-button {
+        background-color: #ff6600;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        margin: auto; 
+        width: 90%; 
+        text-align: center; /* Center the text within the button */
+    }
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    const useButtons = document.querySelectorAll('.use-button');
+
+    useButtons.forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+            const couponCode = this.getAttribute('data-coupon-code');
+            copyToClipboard(couponCode);
+        });
+    });
+
+    function copyToClipboard(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        swal.fire(`Coupon code "${text}" has been copied to the clipboard.`);
+    }
+</script>
+
+</body>
+
+<%- include('../partials/userFooter') %>

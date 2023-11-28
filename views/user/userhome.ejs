@@ -1,0 +1,294 @@
+
+
+
+
+
+<%-include('../partials/userHeader') %>
+
+
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="false">
+
+        <div class="carousel-inner p-1">
+            <% banners.forEach((banner, index)=> { %>
+                <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                    <a href="/user/product/<%= banner.productId %>">
+                    <img src="/static/banner-images/<%= banner.image %>" class="d-block w-100" alt="<%= banner.title %>">
+                    </a>
+                    <div class="carousel-caption d-none d-md-block">
+
+                    </div>
+                </div>
+                <% }); %>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+
+
+    <% const productsToShow = product.slice(0, 8); %>
+
+<div class="py-3 py-md-5 bg-light">
+    <div class="container">
+        <div class="row">
+
+
+            <div class="col-md-12 d-flex justify-content-between align-items-center">
+                <h3 class="mb-4">Our Products</h3>
+                <a href="/user/viewall-products" class="btn btn-primary">View All Products</a>
+            </div>
+            <% productsToShow.forEach((x)=>{ %>
+                <div class="col-6 col-md-3">
+                    <div class="product-card shadow-lg">
+                        <div style="height: 300px;" class="product-card-img p-3">
+                            <a href="/user/product/<%= x._id %>">
+                            <img src="/static/product-images/<%=x.images[0].mainimage%>" alt="Laptop">
+                        </a>
+                        </div>
+                        <%if(x.stock==0) {%>
+                            <label class="stock bg-danger">Out of Stock</label>
+                            <%}else if(x.stock <=10) {%>
+                                <label class="stock bg-danger">Only <%=x.stock%> left</label>
+                                <%}else {%>
+                                    <label class="stock bg-success">In Stock</label>
+                                    <%} %>
+                                    <br>
+                                        <div class="product-card-body">
+                                            <p class="product-brand"></p>
+                                            <h5 class="product-name">
+                                                <%=x.name%>
+                                            </h5>
+                                            <div>
+                                                <span class="selling-price">₹<%=x.descountedPrice%>
+                                                        /-</span>
+                                                <span class="original-price" style="color: red;">₹<%=x.basePrice%>/-</span>
+                                            </div>
+                                            <div class="mt-2">
+                                                <%if(x.stock > 0) {%>
+                                                    <a class="btn btn1 btn-dark rounded-3 add-to-cart-button" data-product-id="<%= x._id %>" href="">Add To
+                                                        Cart</a>
+                                                    <%}else {%>
+                                                        <button class="btn btn1 btn-dark rounded-3 " data-toggle="modal" data-target="#outOfStockModal">Add To Cart</button>
+                                                        <%} %>
+                                                           
+                                                                    <a href="" class="btn  btn1 btn-dark  rounded-3 add-to-wishlist-button" data-product-id="<%= x._id %>"> <i
+                                                                            class="fa fa-heart"></i>
+                                                                    </a>
+                                                                  
+                                                                        <a href="/user/product/<%= x._id %>" class="btn btn1  btn-dark  rounded-3">
+                                                                            View </a>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                            </div>
+                                        </div>
+                        
+                        
+                                        <%}) %>
+                      
+                          <!-- Brands Section -->
+                          <div class="row mt-4">
+                            <div class="col-md-12">
+                                <h3 class="mb-4">Our Brands</h3>
+                            </br>
+                                <div class="row">
+                                    <% if (brand && brand.length > 0) { %>
+                                        <% brand.forEach(brands => { %>
+                                            <div class="col-md-3 mb-3">
+                                                <div class="brand-card text-center">
+                                                    <!-- Add brand card content here -->
+                                                    <img src="/static/product-images/<%=brands.images[0].mainimage%>" alt="<%= brands.name %>" class="img-fluid rounded-circle brand-logo">
+                                                   <p style="text-decoration: none; color: black; font-weight: bold;"><a href="/filter?brand=<%= brands.id %>" > <%= brands.name %> </a></p> 
+                                                </div>
+                                            </div>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <p>No brands available</p>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+            </div>
+            
+
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="outOfStockModal" tabindex="-1" role="dialog" aria-labelledby="outOfStockModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="outOfStockModalLabel">Out of Stock</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+         <p style="color: red;"> This product is currently out of stock. Please check back later.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<style>
+    .cart-animation {
+  animation: cart-bounce 0.5s;
+}
+
+@keyframes cart-bounce {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.brand-card {
+       
+        margin-right: 20px; 
+    }
+    .brand-logo {
+        width: 100px; 
+        height: 100px; 
+        object-fit: cover; 
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Initialize the carousel
+    const carousel = new bootstrap.Carousel(document.getElementById("carouselExampleCaptions"), {
+        interval: false, // Disable automatic sliding
+    });
+
+    const carouselItems = document.querySelectorAll(".carousel-item");
+
+    let currentIndex = 0;
+    const totalItems = carouselItems.length;
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % totalItems;
+        carousel.to(currentIndex);
+    }
+    setInterval(nextSlide, 10000);
+});
+
+
+
+
+
+
+
+function updateCartQuantity() {
+       
+        $.ajax({
+            url: '/getcartquantity', 
+            method: 'GET',
+            success: function (response) {
+                const cartQuantityElement = document.getElementById('cart-quantity');
+                cartQuantityElement.textContent = response.quantity;
+            },
+            error: function (error) {
+                console.error('Error fetching cart quantity:', error);
+            }
+        });
+    }
+
+
+
+   
+document.querySelectorAll('.add-to-cart-button').forEach(button => {
+  button.addEventListener('click', function (event) {
+    event.preventDefault();
+
+    const productId = this.getAttribute('data-product-id');
+
+    $.ajax({
+      url: '/addtocart/' + productId,
+      method: 'POST',
+      success: function (response) {
+        swal.fire("Item added to cart..");
+     
+
+      
+        
+        // Add the animation class to the product element
+        const productCard = this.closest('.product-card');
+        productCard.classList.add('cart-animation');
+
+        // Update the cart quantity
+        updateCartQuantity();
+      },
+      error: function (error) {
+        console.error('Error adding product to cart:', error);
+      }
+    });
+  });
+});
+document.querySelectorAll('.product-card').forEach(productCard => {
+  productCard.addEventListener('animationend', function () {
+    productCard.classList.remove('cart-animation');
+  });
+});
+
+  
+    document.querySelectorAll('.add-to-wishlist-button').forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+
+                const productId = this.getAttribute('data-product-id');
+                const icon = this.querySelector('.fa-heart');
+
+                $.ajax({
+                    url: '/wishlist/'+ productId,
+                    method: 'POST',
+                    data: {
+                        productId: productId,
+                    },
+                    success: function (response) {
+                        console.log(icon.style.color)
+                        if (response.added) {
+                            icon.classList.add('text-danger')
+                            swal.fire("item added to your wishlist...")
+                        } else {
+                            icon.classList.remove('text-danger')
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error updating wishlist:', error);
+                    }
+                });
+            });
+        });
+
+
+</script>
+
+
+
+<%-include('../partials/userFooter') %>
+
+
+

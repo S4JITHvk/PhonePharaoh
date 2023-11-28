@@ -1,0 +1,297 @@
+
+  <%-include('../layouts/header')%>
+  <%- include('../partials/userHeader') %>
+
+  <br>
+  <section>
+    <div class="main-navbar shadow-sm sticky-top" style="width: 100vw;">
+        <ul style="list-style: none;">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    </i><strong>Filter</strong>
+                </a>
+                <ul class="dropdown-menu p-4" style="line-height: 10px;" aria-labelledby="navbarDropdown">
+                    <li>
+                        <h6><strong> Categories</strong></h6>
+                    </li>
+                    <% categories.forEach((cat) => { %>
+                      <li>
+                          <a  class="dropdown-item" href="/filter?category=<%= cat.id %>" ><p> <%= cat.name %> </p></a>
+                        </li>
+                    <% }); %>
+                    
+                    <li>
+                        <h6><strong>BRANDS</strong></h6>
+                    </li>
+                    <% brands.forEach((bran) => { %>
+                      <li>
+                          <a class="dropdown-item" href="/filter?brand=<%= bran.id %>" ><p> <%= bran.name %> </p></a>
+                      </li>
+                  <% }); %>
+                    
+                        <h6><strong>PRICE</strong></h6>
+                    </li>
+                    <li> <a class="dropdown-item" href="/filter?price=a-z" >
+                            <p>Lowest to Highest </p>
+                        </a></li>
+                    <li><a class="dropdown-item" href="/filter?price=z-a">
+                            <p>Highest to Lowest </p>
+                        </a></li>
+                   
+                </ul>
+            </li>
+        </ul>
+    </div>
+</section>
+        <br>
+       <div class="container">
+        <div class="col-lg-12">
+          <header class="d-sm-flex align-items-center border-bottom mb-4 pb-3">
+            <% if(header) { %>
+              <h3><%= header %></h3>
+            <% } else { %>
+              <h3>Shop</h3>
+            <% } %>
+          </header>
+          <%if(viewallProducts){%>
+            <%viewallProducts.forEach((data)=>{ %>
+          <div class="row justify-content-center mb-3">
+            <div class="col-md-12">
+              <div class="card shadow-0 border rounded-3  product-card" data-category="<%= data.category %>" data-brand="<%= data.brand %>" data-price="<%= data.descountedPrice %>">
+                <div class="card-body">
+                  <div class="row g-0">
+                    <div class="col-xl-3 col-md-4 d-flex justify-content-center">
+                      <div class="bg-image hover-zoom ripple rounded ripple-surface me-md-3 mb-3 mb-md-0">
+                        <a href="/user/product/<%=data._id%>"> <img src="/static/product-images/<%= data.images[0].mainimage %>" alt="fsrd" class="w-100" /></a>
+                        
+                          <div class="hover-overlay">
+                            <div class="mask" style="background-color: rgba(253, 253, 253, 0.15);"></div>
+                          </div>
+                        </a>
+                      </div>
+                    </div>
+                    
+                    <div class="col-xl-6 col-md-5 col-sm-7" >
+                      <a href="/user/product/<%-data._id%>" style="text-decoration: none;"> <h5><%=data.name%></h5></a>
+                     
+                      <h5>Description :</h5>
+                      <p class="text mb-4 mb-md-0">
+                        <%=data.description%>
+                      </p>
+                      <br>
+                      <h5>Specification :</h5>
+                      <p class="text mb-4 mb-md-0">
+                        <%=data.spec1%>
+                      </p>
+                      <p class="text mb-4 mb-md-0">
+                        <%=data.spec2%>
+                      </p>
+                      <p class="text mb-4 mb-md-0">
+                        <%=data.spec3%>
+                      </p>
+                    </div>
+                    <div class="col-xl-3 col-md-3 col-sm-5">
+                      <div class="d-flex flex-row align-items-center mb-1">
+                        <% if (data.beforeOffer && data.descountedPrice < data.beforeOffer) { %>
+                            <% let discountPercentage = ((data.beforeOffer - data.descountedPrice) / data.beforeOffer) * 100; %>
+                            <h4 class="mb-1 me-1">₹<%=data.descountedPrice%></h4>
+                            <del><span class="text-danger">₹<%=data.beforeOffer%></span></del>
+                            <span class="badge bg-warning text-dark">-<%= Math.round(discountPercentage) %>%off</span>
+                        <% } else { %>
+                            <h4 class="mb-1 me-1">₹<%=data.descountedPrice%></h4>
+                            
+                        <% } %>
+                    </div>
+                      <%if(data.stock>0){%>
+                        <h6 class="text-success">In stock</h6>
+                        <%}else{%>
+                        <h6 class="text-danger">out of stock</h6>
+                          <%}%>
+                      <div class="mt-4">
+                        <%if(data.stock>0){%>
+                        <button class="btn btn-dark btn1 rounded-3 add-to-cart-button" data-product-id="<%= data._id %>">Add To Cart</button>
+                        <%}else{%>
+                          <button class="btn btn-dark rounded-3 " data-toggle="modal" data-target="#outOfStockModal">Add To Cart</button>
+                          <%}%>
+                        <a class="btn btn-dark border px-2 pt-2 icon-hover add-to-wishlist-button" data-product-id="<%= data._id %>"><i class="fa-solid fa-heart fa-lg" style="color: #ffffff;"></i></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          
+  
+          <!-- <hr /> -->
+
+          <%})%>
+         
+  
+          <!-- Pagination -->
+          <nav aria-label="Page navigation example" class="d-flex justify-content-center mt-3">
+            <ul class="pagination">
+             <% if (page > 1) { %>
+  <li class="page-item">
+    <a class="page-link" href="?page=<%= page - 1 %>&limit=8" aria-label="Previous">
+      <span aria-hidden="true">&laquo;</span>
+    </a>
+  </li>
+<% } else { %>
+  <li class="page-item disabled">
+    <span class="page-link" aria-label="Previous">
+      <span aria-hidden="true">&laquo;</span>
+    </span>
+  </li>
+<% } %>
+
+              
+              <% for (let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= page === i ? 'active' : '' %>">
+                  <a class="page-link" href="?page=<%= i %>&limit=8"><%= i %></a>
+                </li>
+              <% } %>
+              <% if (page < totalPages) { %>
+                <li class="page-item">
+                  <a class="page-link" href="?page=<%= page + 1 %>&limit=8" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              <% } else { %>
+                <li class="page-item disabled">
+                  <span class="page-link" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </span>
+                </li>
+              <% } %>
+              
+            </ul>
+          </nav>
+          
+          
+          <!-- Pagination -->
+          <%}else{%>
+            <h1>404 Not Found</h1>
+            <% } %>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="modal fade" id="outOfStockModal" tabindex="-1" role="dialog" aria-labelledby="outOfStockModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="outOfStockModalLabel">Out of Stock</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+         <p style="color: red;"> This product is currently out of stock. Please check back later.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <style>
+    a{
+        text-decoration: none;
+    }
+    .bg-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+   }
+
+  </style>
+  <script>
+ 
+document.addEventListener("DOMContentLoaded", function () {
+    const carousel = new bootstrap.Carousel(document.getElementById("carouselExampleCaptions"), {
+        interval: false, // Disable automatic sliding
+    });
+
+    const carouselItems = document.querySelectorAll(".carousel-item");
+
+    let currentIndex = 0;
+    const totalItems = carouselItems.length;
+
+    // Listen for mouseenter on the carousel container
+    document.getElementById("carouselExampleCaptions").addEventListener("mouseenter", function () {
+        // Programmatically advance to the next slide on mouseenter
+        currentIndex = (currentIndex + 1) % totalItems;
+        carousel.to(currentIndex);
+    });
+});
+
+
+
+
+
+
+   
+    document.querySelectorAll('.add-to-cart-button').forEach(button => {
+      button.addEventListener('click', function (event) {
+        event.preventDefault(); 
+  
+        const productId = this.getAttribute('data-product-id');
+  
+       
+        $.ajax({
+          url: '/addtocart/' + productId,
+          method: 'POST', 
+          success: function (response) {
+            
+            alert('Product added to cart');
+            updateCartQuantity();
+          },
+          error: function (error) {
+            console.error('Error adding product to cart:', error);
+          }
+        });
+      });
+    });
+  
+    document.querySelectorAll('.add-to-wishlist-button').forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+
+                const productId = this.getAttribute('data-product-id');
+                const icon = this.querySelector('.fa-heart');
+
+                $.ajax({
+                    url: '/wishlist/'+ productId,
+                    method: 'POST',
+                    data: {
+                        productId: productId,
+                    },
+                    success: function (response) {
+                        console.log(icon.style.color)
+                        if (response.added) {
+                            icon.classList.add('text-danger')
+                            alert("item added to your wishlist...")
+                        } else {
+                            icon.classList.remove('text-danger')
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error updating wishlist:', error);
+                    }
+                });
+            });
+        });
+
+   
+
+
+
+</script>
+
+  <%- include('../layouts/footer') %>
+  <%- include('../partials/userFooter') %>
+  

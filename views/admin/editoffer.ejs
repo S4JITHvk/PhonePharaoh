@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/static/style/add-category.css">
+  <link rel="stylesheet" href="/static/style/admin-head.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+<%- include('../partials/admin-sample-nav.ejs') %>
+
+<div class="details">
+  <div class="recentOrders">
+    
+    <h2>Edit Category Offer</h2>
+  
+    <form id="editOfferForm" class="row g-3 p-5" method="POST" action="/admin/edit-offer/<%= offer._id %>" onsubmit="return validateForm()">
+      <div class="col-md-12"> 
+        <label for="categoryName" class="form-label">Category Name</label>
+        <input class="form-control" id="categoryName" disabled type="text" value="<%= offer.categoryName %>" required>              
+      </div>
+
+      <div class="col-md-12"> 
+        <label for="offerPercentage" class="form-label">Offer Percentage</label>
+        <input class="form-control" id="offerPercentage" type="number" name="offerPercentage" min="0" max="75" value="<%= offer.offerPercentage %>" required>              
+        <div id="percentageError" class="error text-danger"></div>
+      </div>
+     
+      <div class="col-md-12"> 
+        <label for="expiryDate" class="form-label">Expiry Date</label>
+        <%   var formattedDate = new Date(offer.expiryDate).toISOString().split('T')[0]; %>
+        <input class="form-control" id="expiryDate" type="date" name="expiryDate" value="<%= formattedDate  %>" required>              
+        <div id="expiryDateError" class="error text-danger"></div>
+    </div>
+    
+   
+      <div class="d-flex justify-content-around">
+        <div class="cardHeader d-flex">
+          <button type="submit" class="btn btn-dark" id="editCouponBtn">Edit Offer</button>
+        </div>
+        <div class="cardHeader d-flex">
+          <a href="/admin/offers" class="btn btn-dark" onclick="return confirm('Are you sure you want to leave this page?')">Cancel</a>
+        </div>
+      </div>
+    </form>
+  
+  </div>
+</div>
+
+<script>
+
+
+  function validateForm() {
+    var offerPercentage = parseInt($('#offerPercentage').val());
+    var expiryDate = new Date($('#expiryDate').val());
+
+    // Validate offer percentage
+    if (offerPercentage < 0 || offerPercentage > 100 || isNaN(offerPercentage)) {
+      $('#percentageError').text('Offer percentage must be between 0 and 100.');
+      return false;
+    } else {
+      $('#percentageError').text('');
+    }
+
+    // Validate expiry date
+    var currentDate = new Date();
+    if (expiryDate <= currentDate) {
+      $('#expiryDateError').text('Expiry date must be greater than the current date.');
+      return false;
+    } else {
+      $('#expiryDateError').text('');
+    }
+
+    return true;
+  }
+</script>
+
+<%- include('../layouts/footer.ejs') %>

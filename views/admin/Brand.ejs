@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/static/style/admin-head.css"/>
+  <link rel="stylesheet" href="/static/style/category.css"/>
+
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+<%-include('../partials/admin-sample-nav')-%>
+<section class="main">
+  <div class="container">
+    <div class="row d-flex header">
+      <div class="col-6"><h2>Brands</h2></div>
+      <div class="col-6 d-flex justify-content-end"><a href="/admin/add-brand" class="btn-custom">Add Brands</a></div>
+    </div>
+
+    <div class="row mt-3">
+      <div class="products-main col-12">
+        <div class="search col-12">
+            <div class="d-flex justify-content-end align-items-center">
+              <form action="/admin/brand/search" method="post">
+                <div class="input-group">
+                  <div class="form-outline d-flex p-3">
+                    <input type="search" class="form-control" name="search" placeholder="Search">
+                        <button id="search-button" type="submit" class="btn btn-custom  mx-2" style="width: 40px;height: 40px;border-radius: 6px;">
+                          
+                          <lord-icon
+                          src="https://cdn.lordicon.com/rlizirgt.json"
+                          trigger="hover"
+                          colors="primary:#ffffff"
+                          style="width:25px;height:25px">
+                      </lord-icon>
+                        </button>
+                  </div>
+                  
+                </div>
+              </form>
+            </div>
+            <%if(Array.isArray(brand)){%>
+            <table class="table  table-shadow mt-3">
+                <thead>
+                    <tr>
+                        <th class="">Brand</th>
+                        <th class="text-center">Updated Date</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <%brand.forEach((data)=>{%>
+                <tbody>
+                    
+                        <tr>
+                          <td><div class="table-data1"><img src="<%=data.images[0].mainimage?'/static/product-images/'+data.images[0].mainimage:'/static/images/img-bg.jpg'%>" style="height:44px;width: 44px; border-radius: 50%; margin-right: 10px;"><span style="font-family: 700;"><%=data.name%></span></div> </td>
+                          <td> <div class="table-data"><%=data.timeStamp%></div> </td>
+                          <td>
+                            <div class="table-data">
+                              <a href="/admin/brand/edit/<%=data._id%>"><lord-icon
+                                src="https://cdn.lordicon.com/qtqvorle.json"
+                                trigger="hover"
+                                colors="outline:#121331,primary:#646e78,secondary:#ebe6ef,tertiary:#4cb4fd"
+                                style="width:25px;height:25px">
+                            </lord-icon></a>
+                            <a href="/admin/brand/delete/<%=data._id%>" onclick="return confirm('Do you want to Remove <%=data.name%> ?')">
+                            <lord-icon
+                              src="https://cdn.lordicon.com/exkbusmy.json"
+                              trigger="morph"
+                              colors="outline:#121331,primary:#646e78,secondary:#4bb3fd,tertiary:#ebe6ef"
+                              state="morph-trash-in"
+                              style="width:25px;height:25px">
+                          </lord-icon></a>
+                            </div>
+                          </td>
+                        </tr>
+                    
+                </tbody>
+                <%})%>
+            </table>
+            <nav aria-label="Page navigation example" class="d-flex justify-content-center mt-3">
+              <ul class="pagination">
+               <% if (page > 1) { %>
+    <li class="page-item">
+      <a class="page-link" href="?page=<%= page - 1 %>&limit=8" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+  <% } else { %>
+    <li class="page-item disabled">
+      <span class="page-link" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </span>
+    </li>
+  <% } %>
+  
+                
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                  <li class="page-item <%= page === i ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= i %>&limit=8"><%= i %></a>
+                  </li>
+                <% } %>
+                <% if (page < totalPages) { %>
+                  <li class="page-item">
+                    <a class="page-link" href="?page=<%= page + 1 %>&limit=8" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                <% } else { %>
+                  <li class="page-item disabled">
+                    <span class="page-link" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </span>
+                  </li>
+                <% } %>
+                
+              </ul>
+            </nav>
+            <%}else{%>
+              <h1>nothing here to see</h1>
+            <%}%>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+<hr>
+<br>
+
+<style>
+    a{
+    text-decoration: none;
+    color: #191919;
+  }
+</style>
+<%-include('../layouts/footer')-%>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/static/style/admin-head.css"/>
+  <link rel="stylesheet" href="/static/style/add-product.css">
+  <link rel="stylesheet" href="/static/style/sample.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+  <%-include('../partials/admin-sample-nav')-%>
+    <div class="main">
+
+      <div class="form-main mt-4 pb-2">
+        <form action="/admin/product_edit/<%=product._id%>" enctype="multipart/form-data" method="post" onsubmit="return validateForm()">
+          <div class="container">
+            <div class="row pt-4">
+              <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                <div class="general-main">
+                  <span class="mt-2" style="font-size: 1.5rem;font-weight: 700;">Edit Product</span>
+                  <div class="textfield mt-5">
+                    <label for="Product_Name">Product Name:</label>
+                    <input required type="text"  id="Product_Name" name="Product_Name" value="<%=product.name%>">
+                  </div>
+                  <div class="textfield mt-5">
+                    <label for="PDescription">Description:</label>
+                    <input required type="Text" placeholder="Description" id="Description" name="Description" value="<%=product.description%>">
+                  </div>
+                  <div class="textfield mt-5">
+                    <label for="Product_Name">Specification1:</label>
+                    <input required type="Text" placeholder="Specification1" id="Description" name="spec1" value="<%=product.spec1%>">
+                  </div>
+                  <div class="textfield mt-5">
+                    <label for="Product_Name">Specification2:</label>
+                    <input required type="Text" placeholder="Specification2" id="Description" name="spec2" value="<%=product.spec2%>">
+                  </div>
+                  <div class="textfield mt-5">
+                    <label for="Product_Name">Specification3:</label>
+                    <input required type="Text" placeholder="Specification3" id="Description" name="spec3" value="<%=product.spec3%>">
+                  </div>
+                  <div class="textfield mt-5">
+                    <label for="Product_Name">Stock:</label>
+                    <input required type="number" placeholder="stock" id="stock" name="stock" value="<%=product.stock%>">
+                  </div>
+                  <span id="stockError" class="error-msg"style="color: red;"></span>
+                  <div class="textfield mt-5">
+                    <label for="Product_Name">BasePrice:</label>
+                    <input required type="number" placeholder="basePrice" id="basePrice" name="basePrice" value="<%=product.basePrice%>">
+                  </div>
+                  <span id="basePriceError" class="error-msg"style="color: red;"></span>
+                  <div class="textfield mt-5">
+                    <label for="Product_Name">DiscountedPrice:</label>
+                    <input required type="number" placeholder="descountedPrice" id="descountedPrice"
+                      name="descountedPrice" value="<%=product.descountedPrice%>">
+                  </div>
+                  <span id="discountedPriceError" class="error-msg" style="color: red;"></span>
+                  <div class="textfield mt-5 ">
+                    <label for="Product_Name">brand:</label>
+                    <select name="brand" id="brand">
+    
+                          <% brand.forEach(brand => { %>
+                            <option <% if (product.brandId.toString() === brand._id.toString() ) 
+                            { %> selected <% } %>><%= brand.name %></option>
+                        <% }); %>
+                    </select>
+                  </div>
+                  <div class="textfield mt-5 mb-5">
+                    <label for="Product_Name">category:</label>
+                    <select name="category" id="category">
+                          <% category.forEach(cat => { %>
+                            <option <% if (product.categoryId.toString() === cat._id.toString() ) { %> selected <% } %>><%= cat.name %></option>
+                        <% }); %>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-sm-12 col-md-6 col-lg-6">
+                <div class="images-main container">
+                  <div class="row">
+                    <div class="division-header">
+                      <span style="font-size: 1rem;font-weight: 700; ">Media</span>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="images">
+                      <input type="file" name="main" accept="image/*" id="main" 
+                        onchange="previewImage('main', 'mn')">
+                      <label for="main">
+                        <div class="img-main">
+                          <img class="priview" src="<%=product.images[0].mainimage?'/static/product-images/'+product.images[0].mainimage:'/static/assets/img-bg.jpg'%>"  id="mn">
+                        </div>
+                        <input type="hidden" id="productId" value="<%= product.id %>">
+                        <button class="btn bg-danger " style="height: 30px; width: 80px; margin-top: 13px;" onclick="deleteImage(0)">Remove</button>
+                      </label>
+                      <input type="file" name="image1" accept="image/*" id="imag1"
+                        onchange="previewImage('imag1', 'im1')">
+                      <label for="imag1">
+                        <div class="img1">
+                          <img class="priview" src="<%=product.images[0].image1?'/static/product-images/'+product.images[0].image1:'/static/assets/img-bg.jpg'%>"  id="im1">
+                        </div>
+                        <input type="hidden" id="productId" value="<%= product.id %>">
+                        <button class="btn bg-danger " style="height: 30px; width: 80px; margin-top: 13px;" onclick="deleteImage(1)">Remove</button>
+
+                      </label>
+                      <input type="file" name="image2" accept="image/*" id="imag2" 
+                        onchange="previewImage('imag2', 'im2')">
+                      <label for="imag2">
+                        <div class="img2 ">
+                          <img class="priview" src="<%=product.images[0].image2?'/static/product-images/'+product.images[0].image2:'/static/assets/img-bg.jpg'%>"   id="im2">
+                        </div>
+                        <input type="hidden" id="productId" value="<%= product.id %>">
+                        <button class="btn bg-danger " style="height: 30px; width: 80px; margin-top: 13px;" onclick="deleteImage(2)">Remove</button>
+                      </label>
+
+                    </div>
+                  </div>
+                </div>
+                <div class="action-buttons">
+                  <div class="cancel-btn">
+                    <a href="/admin/products" class="btn btn-outline" >Cancel</a>
+                  </div>
+                  <div class="save-btn">
+                   <input type="submit" class="btn btn-info text-white" value="SAVE">
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <style>
+      .textfield {
+        position: relative;
+        margin-bottom: 1em;
+      }
+    
+      .textfield label {
+        position: absolute;
+        top: -20px; /* Adjust this value as needed */
+        left: 0;
+        background-color: white;
+        padding: 0 4px;
+      }
+    
+      .textfield input {
+        padding-top: 20px; /* Ensure input content doesn't overlap with the label */
+      }
+    </style>
+    <script>
+      let list = document.querySelectorAll(".navigation_nav li");
+
+      function activeLink() {
+        list.forEach((item) => {
+          item.classList.remove("hovered");
+        });
+        this.classList.add("hovered");
+      }
+
+      list.forEach((item) => item.addEventListener("mouseover", activeLink));
+
+      // Menu Toggle
+      let toggle = document.querySelector(".toggle");
+      let navigation = document.querySelector(".navigation_nav");
+      let main = document.querySelector(".main");
+
+      toggle.onclick = function () {
+        navigation.classList.toggle("active");
+        main.classList.toggle("active");
+      };
+      //priview images
+      function previewImage(inputId, imgId) {
+        const input = document.getElementById(inputId);
+        const img = document.getElementById(imgId);
+        // const labeltext = document.getElementById(label)
+        // Check if a file was selected
+        if (input.files && input.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            img.src = e.target.result;
+            labeltext.style.display = 'none'
+          };
+          reader.readAsDataURL(input.files[0]);
+        } else {
+          img.src = "";
+        }
+      }
+      function refreshImages() {
+      window.location.reload();
+  }
+      function deleteImage(index) {
+    const confirmed = confirm('Are you sure you want to delete this image?');
+
+    if (confirmed) {
+    const productId = document.getElementById('productId').value;
+
+    fetch(`/admin/delete-image/${productId}/${index}`, {
+      method: 'DELETE',
+    })
+    .then(response => {
+      if (response.status === 200) {
+        alert('Image deleted successfully');
+        refreshImages(); 
+      } else {
+        alert('Failed to delete image');
+      }
+    })
+    .catch(error => {
+      console.error('Error deleting image:', error);
+    });
+  }
+  }
+  function validateForm() {
+    const basePriceInput = document.getElementById('basePrice');
+    const discountedPriceInput = document.getElementById('descountedPrice');
+    const stockInput = document.getElementById('stock');
+    const basePriceError = document.getElementById('basePriceError');
+    const discountedPriceError = document.getElementById('discountedPriceError');
+    const stockError = document.getElementById('stockError');
+    basePriceError.innerText = '';
+    discountedPriceError.innerText = '';
+    stockError.innerText = '';
+    const basePrice = parseFloat(basePriceInput.value);
+    const discountedPrice = parseFloat(discountedPriceInput.value);
+    const stock = parseFloat(stockInput.value);
+    if (basePrice < 0) {
+      basePriceError.innerText = 'Base price must not be negative';
+    }
+    if (discountedPrice < 0) {
+      discountedPriceError.innerText = 'Discounted price must not be negative';
+    }
+    if (stock < 0) {
+      stockError.innerText = 'Stock must not be negative';
+    }
+    if (basePriceError.innerText || discountedPriceError.innerText || stockError.innerText) {
+      return false;
+    }
+    return true;
+  }
+
+    </script>
+    <%-include("../layouts/footer")-%>
