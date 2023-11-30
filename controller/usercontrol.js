@@ -249,6 +249,7 @@ const forgetpass_get=(req,res)=>{
 }
 const resetpass=async (req,res)=>{
     try{
+ 
        const reset=req.body.reset
     const newpass = await bcrypt.hash(req.body.password, 10);
     const check=await user.findOneAndUpdate({email:reset},{$set:{password:newpass}})

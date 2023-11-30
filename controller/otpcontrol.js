@@ -3,7 +3,7 @@ const generateOTP = require("../util/otpgenerator");
 const sendEmail=require("../util/email");
 const bcrypt=require("bcrypt");
 const {AUTH_EMAIL}=process.env;
-const hashData=require("../util/hashData")
+// const hashData=require("../util/hashData")
 const user = require("../models/user")
 const validation=require("../auth/mailvalidation")
 const Products=require("../models/product")
@@ -15,14 +15,8 @@ const sendOTP=async (email)=>{
         if(!(email)){
             throw Error("provide values for email,subject,message")
         }
-        
-        //clear old otp
         await OTP.deleteOne({email})
-       
-        //generate new otp
         const generatedOTP=await generateOTP();
-
-        //sending email to the user
         const mailOptions={
             from:AUTH_EMAIL,
             to:email,
@@ -31,12 +25,9 @@ const sendOTP=async (email)=>{
             <b>${generatedOTP}</b></p><p>OTP will expire in<b> 10 minute(s)</b>.</p>`
         }
         await sendEmail(mailOptions);
-
-        //save otp record
-        
         const hashedData=await bcrypt.hash(generatedOTP,10);
         function addMinutesToDate(date, minutes) {
-            return new Date(date.getTime() + minutes * 60000); // 60000 milliseconds in a minute
+            return new Date(date.getTime() + minutes * 60000); 
           }
         const currentDate =new Date();
         const newDate = addMinutesToDate(currentDate, 10);
@@ -59,8 +50,7 @@ const otppage_get=(req,res)=>{
     res.render("./user/otpPage",{title:"otp",errmsg:req.flash("errmsg")});
 }
 const OtpConfirmation = async (req,res) => {
-    if(req.session.forgot){
-        
+    if(req.session.forgot){      
     try{
         const email=req.session.email
         console.log("forgot confirmation :",email);
