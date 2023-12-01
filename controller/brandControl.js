@@ -7,15 +7,12 @@ const { ObjectId } = require("mongodb");
 const brand_list = async (req, res) => {
   const limit = parseInt(req.query.limit) || 8
   const page = parseInt(req.query.page) || 1; 
-
   try {
     const totalBrands = await Brands.countDocuments();
     const totalPages = Math.ceil(totalBrands / limit );
-
     const brands = await Brands.find()
       .skip((page - 1) * limit )
       .limit(limit);
-
     res.render("./admin/Brand", {
       brand: brands,
        page,
@@ -94,12 +91,10 @@ const brand_list = async (req, res) => {
   };
   const brand_search=async (req,res)=>{
     try {
-      const form_data = req.body;
-     
+      const form_data = req.body;    
       let brand = await Brands.find({
         name: { $regex: "^" + form_data.search, $options: "i" },
-      });
-    
+      });    
       res.render("./admin/Brand", { brand: brand });
     } catch (err) {
       throw err;

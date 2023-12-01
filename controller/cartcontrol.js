@@ -44,7 +44,7 @@ const viewCart = async (req, res) => {
       const couponValue = 50;
       total -= couponValue;
     }
-    res.render("/user/cart", {
+    res.render("./user/cart", {
       username: username,
       product: cart.products,
       cart,
@@ -66,19 +66,14 @@ const addToCart = async (req, res) => {
     const user = await User.findOne({ email: userEmail });
     const userId = user._id;
     const productId = req.params.productId;
-
-    // Fetch product details (name and price)
     const products = await product.findById(productId);
     const productName = products.name;
     const productPrice = products.descountedPrice;
-
     const check = await Cart.findOne({ userId: userId });
-
     if (check !== null) {
       const existingCart = check.products.find((item) =>
         item.productId.equals(productId)
       );
-
       if (existingCart) {
         existingCart.quantity += 1;
       } else {
@@ -87,14 +82,12 @@ const addToCart = async (req, res) => {
           productname: productName,
           productprice: productPrice,
           quantity: 1,
-        }
-      
+        }     
       if (products.beforeOffer) {
         const discountPercent = ((products.beforeOffer - products.descountedPrice) / products.beforeOffer) * 100;
         console.log(discountPercent);
         newItem.discountPercent = Math.floor(discountPercent);
-      }
-  
+      } 
       check.products.push(newItem);
     }
       await check.save();
@@ -112,8 +105,7 @@ const addToCart = async (req, res) => {
             discountPercent: products.beforeOffer ? ((products.beforeOffer - products.descountedPrice) / products.beforeOffer) * 100 : 0,
           },
         ],
-      });
-    
+      });   
       await newCart.save();
       res.json({ success: true, message: "Item added to the cart" });
       req.flash("msg", "Item added to the cart");

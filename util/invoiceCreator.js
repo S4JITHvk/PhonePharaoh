@@ -52,12 +52,9 @@ module.exports = {
                 },
             };
 
-            console.log(data, "========>");
             const result = await easyinvoice.createInvoice(data);
-
             const filePath = path.join(__dirname, '..', 'public', 'pdf', `${orderDetails[0]._id}.pdf`);
             await fs.promises.writeFile(filePath, result.pdf, 'base64');
-
             return filePath;
         } catch (error) {
             console.error(error);

@@ -25,9 +25,7 @@ const admin_validation = async (req, res) => {
   try {
     const { email, password } = req.body;
     const admin = await Superadmin.findOne({ email: email });
-
-    if (admin) {
-     
+    if (admin) {  
       bcrypt.compare(password, admin.password, (err, isMatch) => {
         if (err) {
           console.log(err);
@@ -41,8 +39,7 @@ const admin_validation = async (req, res) => {
           console.log("ADMIN LOGIN SUCCESSFUL");
         }
       });
-    } else {
-      
+    } else {     
       req.flash("errmsg", "Wrong Email!");
       res.redirect("/admin/login")
     }
@@ -56,26 +53,21 @@ const admin_validation = async (req, res) => {
 // ADMIN DASHBOARD
 const admin_dash = (req, res) => {
   if(req.session.admin){
-    res.render("./admin/admindash");
+    res.render("./admin/adminDash");
   }else{
     res.redirect("/admin/login")
   }
-      
-    
   };
 // USER MANAGEMENT
 const customers_list = async (req, res) => {
   const limit = parseInt(req.query.limit) || 10 
   const page = parseInt(req.query.page) || 1; 
-
   try {
     const totalUsers = await User.countDocuments();
     const totalPages = Math.ceil(totalUsers / limit);
-
     const users = await User.find()
       .skip((page - 1) * limit)
       .limit(limit);
-
     res.render("./admin/customers", {
       user: users,
        page,
@@ -94,8 +86,6 @@ const customers_block=async(req,res)=>{
   const id = req.params.id;
   await User.updateOne({ _id: id }, { $set: {"ISbanned":true} });
   res.redirect("/admin/customers");
-
-
   }catch(err){
     throw err;
   }
@@ -106,7 +96,6 @@ const customers_unblock=async(req,res)=>{
   const id = req.params.id;
   await User.updateOne({ _id: id }, { $set: {"ISbanned":false} });
   res.redirect("/admin/customers");
-
   }catch(err){
     throw err;
   }
@@ -114,7 +103,6 @@ const customers_unblock=async(req,res)=>{
 
 // USER SEARCH
 const customers_search= async(req,res)=>{
- 
  try{
     const data=req.body
   const user = await User.find({userName: { $regex: "^" + data.search, $options: 'i' }});
@@ -155,61 +143,41 @@ const getCount=async(req,res)=>{
     const totalAmountByYear = {};
     let labelsByCount;
     let labelsByAmount;
-  
     orders.forEach((order) => {
-
       const orderDate = new Date(order.OrderDate);
       const dayMonthYear = orderDate.toISOString().split('T')[0];
       const monthYear = orderDate.toISOString().split('T')[0].slice(0, 7);
-      const year = orderDate.getFullYear();
-      
-      
-      if (req.url === "/count-orders-by-day") {
-       
+      const year = orderDate.getFullYear(); 
+      if (req.url === "/count-orders-by-day") {  
         if (!orderCountsByDay[dayMonthYear]) {
           orderCountsByDay[dayMonthYear] = 1;
-          totalAmountByDay[dayMonthYear] = order.TotalPrice
-         
-         
+          totalAmountByDay[dayMonthYear] = order.TotalPrice                 
         } else {
           orderCountsByDay[dayMonthYear]++;
           totalAmountByDay[dayMonthYear] += order.TotalPrice
         }
-
         const ordersByDay = Object.keys(orderCountsByDay).map(
           (dayMonthYear) => ({
             _id: dayMonthYear,
             count: orderCountsByDay[dayMonthYear],
           })
-        );
-     
-
+        );     
         const amountsByDay = Object.keys(totalAmountByDay).map(
           (dayMonthYear) => ({
             _id: dayMonthYear,
             total: totalAmountByDay[dayMonthYear],
           })
         );
-
-        
-
         amountsByDay.sort((a,b)=> (a._id < b._id ? -1 : 1));
         ordersByDay.sort((a, b) => (a._id < b._id ? -1 : 1));
-
-       
-
         labelsByCount = ordersByDay.map((entry) =>
           moment(entry._id, "YYYY-MM-DD").format("DD MMM YYYY")
         );
-
         labelsByAmount = amountsByDay.map((entry) =>
           moment(entry._id, "YYYY-MM-DD").format("DD MMM YYYY")
         );
-
         dataByCount = ordersByDay.map((entry) => entry.count);
-        dataByAmount = amountsByDay.map((entry) => entry.total);
-              
-
+        dataByAmount = amountsByDay.map((entry) => entry.total);           
       } else if (req.url === "/count-orders-by-month") {
         if (!orderCountsByMonthYear[monthYear]) {
           orderCountsByMonthYear[monthYear] = 1;
@@ -217,8 +185,7 @@ const getCount=async(req,res)=>{
         } else {
           orderCountsByMonthYear[monthYear]++;
           totalAmountByMonthYear[monthYear] += order.TotalPrice;
-        }
-      
+        }  
         const ordersByMonth = Object.keys(orderCountsByMonthYear).map(
           (monthYear) => ({
             _id: monthYear,
@@ -230,23 +197,17 @@ const getCount=async(req,res)=>{
             _id: monthYear,
             total: totalAmountByMonthYear[monthYear],
           })
-        );
-       
-      
+        );  
         ordersByMonth.sort((a, b) => (a._id < b._id ? -1 : 1));
-        amountsByMonth.sort((a, b) => (a._id < b._id ? -1 : 1));
-      
+        amountsByMonth.sort((a, b) => (a._id < b._id ? -1 : 1));  
         labelsByCount = ordersByMonth.map((entry) =>
           moment(entry._id, "YYYY-MM").format("MMM YYYY")
         );
         labelsByAmount = amountsByMonth.map((entry) =>
           moment(entry._id, "YYYY-MM").format("MMM YYYY")
-        );
-       
+        );  
         dataByCount = ordersByMonth.map((entry) => entry.count);
-        dataByAmount = amountsByMonth.map((entry) => entry.total);
-       
-       
+        dataByAmount = amountsByMonth.map((entry) => entry.total);      
       } else if (req.url === "/count-orders-by-year") {
         // Count orders by year
         if (!orderCountsByYear[year]) {
@@ -255,8 +216,7 @@ const getCount=async(req,res)=>{
         } else {
           orderCountsByYear[year]++;
           totalAmountByYear[year] += order.TotalPrice;
-        }
-      
+        }      
         const ordersByYear = Object.keys(orderCountsByYear).map((year) => ({
           _id: year,
           count: orderCountsByYear[year],
@@ -264,21 +224,16 @@ const getCount=async(req,res)=>{
         const amountsByYear = Object.keys(totalAmountByYear).map((year) => ({
           _id: year,
           total: totalAmountByYear[year],
-        }));
-      
+        }));     
         ordersByYear.sort((a, b) => (a._id < b._id ? -1 : 1));
-        amountsByYear.sort((a, b) => (a._id < b._id ? -1 : 1));
-      
+        amountsByYear.sort((a, b) => (a._id < b._id ? -1 : 1));     
         labelsByCount = ordersByYear.map((entry) => entry._id);
         labelsByAmount = amountsByYear.map((entry) => entry._id);
         dataByCount = ordersByYear.map((entry) => entry.count);
         dataByAmount = amountsByYear.map((entry) => entry.total);
       }
-    });
-    
+    });   
     res.json({ labelsByCount,labelsByAmount, dataByCount, dataByAmount });
-    
-
   } catch (error) {
     console.error("error while chart loading :",error)
   }
@@ -322,11 +277,7 @@ try {
   ]);
   
   if (!latestOrders || !bestSeller) throw new Error("No Data Found");
-
   res.json({ latestOrders, bestSeller });
-
-
- 
 } catch (error) {
   console.log("error while fetching the order details in the dashboard",error);
 }

@@ -16,13 +16,12 @@ module.exports = {
         const template = fs.readFileSync('util/template.ejs', 'utf-8');
         const html = ejs.render(template, { orders, startDate:formattedStartDate,
           endDate:formattedEndDate, totalAmount });
-        console.log(typeof(totalAmount));
+          console.log(typeof(totalAmount));
         if (format === 'pdf') {
           const pdfOptions = {
             format: 'Letter',
             orientation: 'portrait',
-          };
-  
+          }; 
           const filePath = `public/SRpdf/sales-report-${formattedStartDate}-${formattedEndDate}.pdf`;
           pdf.create(html, pdfOptions).toFile(filePath, (err, response) => {
             if (err) {
@@ -34,8 +33,7 @@ module.exports = {
           });
         } else if (format === 'excel') {
           const workbook = new exceljs.Workbook();
-          const worksheet = workbook.addWorksheet('Sales Report');
-  
+          const worksheet = workbook.addWorksheet('Sales Report'); 
           worksheet.columns = [
             { header: 'Order ID', key: 'orderId', width: 25 },
             { header: 'Product Name', key: 'productName', width: 25 },
@@ -43,10 +41,8 @@ module.exports = {
             { header: 'Date', key: 'date', width: 25 },
             { header: 'Total Amount', key: 'totalamount', width: 25 },
             { header: 'Payment Method', key: 'paymentmethod', width: 25 },
-          ];
-  
-          let totalSalesAmount = 0;
-  
+          ]; 
+          let totalSalesAmount = 0;  
           orders.forEach(order => {
             order.Items.forEach(item => {
               worksheet.addRow({
@@ -56,20 +52,13 @@ module.exports = {
                 date: order.OrderDate ? new Date(order.OrderDate).toLocaleDateString() : '',
                 totalamount: order.TotalPrice !== undefined ? order.TotalPrice.toFixed(2) : '',
                 paymentmethod: order.PaymentMethod,
-              });
-
-             
-              totalSalesAmount += order.TotalPrice !== undefined ? order.TotalPrice : 0;
-              
+              }); 
+              totalSalesAmount += order.TotalPrice !== undefined ? order.TotalPrice : 0;              
             });
-          });
-  
-          
-          worksheet.addRow({ totalamount: 'Total Sales Amount', paymentmethod: totalSalesAmount.toFixed(2) });
-  
+          });         
+          worksheet.addRow({ totalamount: 'Total Sales Amount', paymentmethod: totalSalesAmount.toFixed(2) }); 
           const excelFilePath = `public/SRexcel/sales-report-${formattedStartDate}-${formattedEndDate}.xlsx`;
           await workbook.xlsx.writeFile(excelFilePath);
-  
           res.status(200).download(excelFilePath);
         } else {
           res.status(400).send('Invalid download format');

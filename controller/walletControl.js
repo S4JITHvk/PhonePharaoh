@@ -9,8 +9,7 @@ const wallet_get=async (req,res)=>{
         const user=await User.findOne({email:email})
         const userId=user._id
         const Wallet=await wallet.findOne({userId:userId})
-        console.log(Wallet)
-      
+        console.log(Wallet)     
         res.render('./user/wallet',{username,Wallet})
     }catch(error){
         console.log(error)

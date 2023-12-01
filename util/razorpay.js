@@ -18,7 +18,6 @@ module.exports = {
               currency: 'INR',
               receipt: order.receipt,
           });
-    //    console.log(razorpayOrder)
           resolve(razorpayOrder) ;
       })
 }

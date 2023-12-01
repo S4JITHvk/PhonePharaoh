@@ -214,10 +214,8 @@ const orderHistory = async (req, res) => {
       const username = req.session.name;
       const user = await User.findOne({ email: Email });
       const userid = user._id;
-
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 5; 
-
       const orders = await Order.find({ UserId: userid })
           .sort({ OrderDate: -1 })
           .populate({
@@ -226,9 +224,7 @@ const orderHistory = async (req, res) => {
           })
           .skip((page - 1) * limit)
           .limit(limit);
-
       const totalOrders = await Order.countDocuments({ UserId: userid });
-
       if (orders.length === 0) {
           return res.render('./user/orderhistory', { username, orders: [], totalOrders,  page,  totalPages: Math.ceil(totalOrders / limit ),limit });
       } else {
@@ -250,21 +246,17 @@ const orderHistory = async (req, res) => {
 
 const verifyPayment=async(req,res)=>{
   try {
-
-    let hmac = crypto.createHmac("sha256", process.env.KEY_SECRET);
-  
+    let hmac = crypto.createHmac("sha256", process.env.KEY_SECRET);  
     hmac.update(
       req.body.payment.razorpay_order_id +
         "|" +
         req.body.payment.razorpay_payment_id
     );
-
     hmac = hmac.digest("hex");
     if (hmac === req.body.payment.razorpay_signature) {
       const orderId = new mongoose.Types.ObjectId(
         req.body.order.createdOrder.receipt
-      );
-    
+      );  
       const updateOrderDocument = await Order.findByIdAndUpdate(orderId, {
         PaymentStatus: "Paid",
         PaymentMethod: "Online",
@@ -275,7 +267,6 @@ const verifyPayment=async(req,res)=>{
       console.log("hmac failed");
       res.json({ failure: true });
     }
-
   } catch (error) {
     console.error("failed to verify the payment",error);
   }
@@ -288,18 +279,14 @@ const OrderList = async (req, res) => {
   try {
     const totalOrders = await Order.countDocuments();
     const totalPages = Math.ceil(totalOrders / limit);
-
     const orders = await Order.find()
       .sort({ OrderDate: -1 })
       .skip((page - 1) * limit)
       .limit(limit);
-
     const userPromises = orders.map((order) => {
       return User.findById(order.UserId);
     });
-
     const users = await Promise.all(userPromises);
-
     res.render('./admin/orders', {
       order: orders,
       users: users,
@@ -322,7 +309,6 @@ const updateOrderStatus = async (req, res) => {
       if (newStatus === "Delivered") {
           await Order.findByIdAndUpdate(orderId, { PaymentStatus: "Paid" });
       }
-
       res.json({ success: true });
   } catch (error) {
       console.error('Error updating order status:', error);
@@ -337,7 +323,6 @@ const viewOrderDetails = async (req, res) => {
     const orderDetails = await Order.findOne({ _id: orderId }).populate(
       "Items.productId"
     );
-
     res.render('./admin/orderviewproduct', { order: orderDetails });
   } catch (error) {
     console.log('Error viewing ordered products:', error);
@@ -353,7 +338,6 @@ const returnProduct = async (req, res) => {
       const userId = user._id;
       const orderId = req.params.orderId;
       const order = await Order.findById(orderId);
-
       if (order) {
           order.Status = "Returned";
           await order.save();
@@ -370,10 +354,8 @@ const returnaccept = async (req, res) => {
     const orderId = req.params.orderId;
     const order = await Order.findById(orderId);
     const userid = order.UserId;
-
     if (order) {
       const userExist = await wallet.findOne({ userId: userid });
-
       if (userExist) {
         await wallet.updateOne(
           { userId: userid },
@@ -398,11 +380,9 @@ const returnaccept = async (req, res) => {
             type: 'credit',
           }],
         });
-
         await newWallet.save();
         console.log("Wallet updated");
       }
-
       order.Status = "Return Accepted";
       order.PaymentStatus="Refund Completed"
       await order.save();
@@ -433,17 +413,13 @@ const downloadInvoice = async (req, res) => {
 };
 const generateInvoices = async (req, res) => {
   try {
-    const { orderId } = req.body;
-    
+    const { orderId } = req.body;    
     const orderDetails = await Order.find({ _id: orderId })
       .populate("Address")
-      .populate("Items.productId");
-   
+      .populate("Items.productId");  
     const ordersId = orderDetails[0]._id;
-
     if (orderDetails) {
-      const invoicePath = await generateInvoice(orderDetails);
-   
+      const invoicePath = await generateInvoice(orderDetails);  
       res.json({
         success: true,
         message: "Invoice generated successfully",

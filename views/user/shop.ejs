@@ -208,6 +208,7 @@
    }
 
   </style>
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script>
  
 document.addEventListener("DOMContentLoaded", function () {
@@ -246,7 +247,7 @@ document.addEventListener("DOMContentLoaded", function () {
           method: 'POST', 
           success: function (response) {
             
-            alert('Product added to cart');
+            swal.fire('Product added to cart');
             updateCartQuantity();
           },
           error: function (error) {
@@ -274,9 +275,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.log(icon.style.color)
                         if (response.added) {
                             icon.classList.add('text-danger')
-                            alert("item added to your wishlist...")
+                            swal.fire("item added to your wishlist...")
                         } else {
-                            icon.classList.remove('text-danger')
+                          swal.fire(response.message)
                         }
                     },
                     error: function (error) {

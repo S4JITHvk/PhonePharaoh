@@ -12,11 +12,9 @@ const category_list = async (req, res) => {
   try {
     const totalCategories = await Categories.countDocuments();
     const totalPages = Math.ceil(totalCategories / limit);
-
     const categories = await Categories.find()
       .skip((page - 1) * limit)
       .limit(limit);
-
     res.render("./admin/categories", {
       category: categories,
        page,
@@ -38,10 +36,8 @@ const category_list = async (req, res) => {
       const main = req.files["main"][0];
       const { Category_name } = req.body;
       const normalizedCategoryName = Category_name.toUpperCase();
-      const existingCategory = await Categories.findOne({ name:{ $regex: new RegExp('^' + normalizedCategoryName + '$', 'i') } });
-  
-      if (existingCategory) {
-       
+      const existingCategory = await Categories.findOne({ name:{ $regex: new RegExp('^' + normalizedCategoryName + '$', 'i') } }); 
+      if (existingCategory) {      
         return res.render('./admin/add-category',{error:"Category Already Exist!!"})
       }
   
@@ -63,8 +59,7 @@ const category_list = async (req, res) => {
   const category_edit_get=async(req,res)=>{
     try {
       const id = req.params.id;
-      const category = await Categories.findOne({ _id: id });
-     
+      const category = await Categories.findOne({ _id: id });    
       res.render("./admin/edit-category", {
         category: category,
       });
@@ -74,11 +69,9 @@ const category_list = async (req, res) => {
   }
   const category_edit = async (req, res) => {
     try {
-      const id = req.params.id;
-      
+      const id = req.params.id;     
       const { Category_name } = req.body;
       const name = Category_name.toUpperCase();
-  
       const data = {
         name: name,
         timeStamp: Date.now(),

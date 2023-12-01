@@ -8,16 +8,12 @@ const addtoWishList = async (req, res) => {
   try {
       const userEmail = req.session.email;
       const user = await User.findOne({ email: userEmail });
-
       if (!user) {
           return res.status(404).json({ error: "User not found" });
       }
-
       const userId = user._id;
       const productId = req.params.productId;
-
       const existingItem = await Wishlist.findOne({ userId: userId });
-
       if (!existingItem) {
           await Wishlist.create({
               userId: userId,

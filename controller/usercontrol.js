@@ -2,7 +2,6 @@ const user =  require("../models/user")
 const bcrypt = require("bcrypt");
 const sendOTP = require("./otpcontrol");
 const OTP = require("../models/otp");
-const validation=require("../auth/mailvalidation")
 const Products=require("../models/product")
 const Brands=require("../models/brand")
 const category=require("../models/category")
@@ -28,10 +27,8 @@ const guest_shop = async (req, res) => {
     const limit = parseInt(req.query.limit) || 8;
     const query = req.query.q || ''; 
     const header=''
-
     const productQuery = {
-      name: { $regex: `^${query}`, $options: 'i' }, 
-     
+      name: { $regex: `^${query}`, $options: 'i' },     
     }; 
     const totalProducts = await Products.countDocuments(productQuery);
     const products = await Products.find(productQuery)
@@ -41,7 +38,6 @@ const guest_shop = async (req, res) => {
     const categories = await category.find();
     const brands = await Brands.find();
     res.render('./user/guestshop', { viewallProducts: products,  categories, brands, page, limit, totalProducts ,totalPages,header});
-
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
@@ -64,17 +60,14 @@ const viewProduct=async(req,res)=>{
 
 //   VIEW ALL PRODUCTS
 const ShopProduct = async (req, res) => {
-  try {
-    
+  try {    
     const username = req.session.name;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 8;
     const query = req.query.q || ''; 
     const header=''
-
     const productQuery = {
-      name: { $regex: `^${query}`, $options: 'i' }, 
-     
+      name: { $regex: `^${query}`, $options: 'i' },      
     }; 
     const totalProducts = await Products.countDocuments(productQuery);
     const products = await Products.find(productQuery)
@@ -84,7 +77,6 @@ const ShopProduct = async (req, res) => {
     const categories = await category.find();
     const brands = await Brands.find();
     res.render('./user/shop', { viewallProducts: products, username, categories, brands, page, limit, totalProducts ,totalPages,header});
-
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
@@ -93,8 +85,7 @@ const ShopProduct = async (req, res) => {
 
 //   Guest Home
 const guest_get=async (req,res)=>{
-    try{
-    
+    try{    
     const product=await Products.find({})
     const brand=await Brands.find({})
     const banners=await Banner.find({}).limit(3)
@@ -121,7 +112,6 @@ const userhome_get=async (req,res)=>{
 const usersignup_get=(req,res)=>{
     res.render("./user/signup",{title:"Signup",errmsg:req.flash("errmsg")})
 }
-
 const userSignup = async (req,res) => {
     try {
         const checkuserexist = await user.find({ email: req.body.email })
@@ -155,19 +145,15 @@ const userSignup = async (req,res) => {
 // FORGET PASSWORD
 
 const forgotPass = async (req, res) => {
-    try{
-      
-        const checkuserexist=await user.findOne({email:req.body.email})
-       
-        if(checkuserexist){
-            
+    try{      
+        const checkuserexist=await user.findOne({email:req.body.email})       
+        if(checkuserexist){           
             const userdata={
                 email:checkuserexist.email,
                 userName:checkuserexist.userName,
                 _id:checkuserexist._id,
             }
-            const email=req.body.email
-   
+            const email=req.body.email   
             req.session.userdata=userdata;
             req.session.email=email.toString();
            res.redirect("/user/otp-senting") 
@@ -179,10 +165,8 @@ const forgotPass = async (req, res) => {
         }
     }catch(err){
         console.log(err);
-        req.session.errmsg="no email found"
-       
+        req.session.errmsg="no email found"       
     }
-
 }
 
 // USER LOGIN
@@ -199,8 +183,7 @@ const userlogin_get=(req,res)=>{
 }
 
 const userLogin = async (req, res) => {
-    try {
-            
+    try {           
         const checkuserexist = await user.findOne({ email: req.body.email })
         console.log( checkuserexist);
         if( checkuserexist){
@@ -248,8 +231,7 @@ const forgetpass_get=(req,res)=>{
     res.render("./user/forgot-pass",{title:"Forget-pass",errmsg:req.flash("errmsg")})
 }
 const resetpass=async (req,res)=>{
-    try{
- 
+    try{ 
        const reset=req.body.reset
     const newpass = await bcrypt.hash(req.body.password, 10);
     const check=await user.findOneAndUpdate({email:reset},{$set:{password:newpass}})
@@ -283,9 +265,7 @@ const userProfile = async (req, res) => {
     const email = req.session.email; 
     const username=req.session.name
     try {
-        const data = await user.find({ email: email });
-     
-  
+        const data = await user.find({ email: email }); 
         res.render('./user/profile', { profile: data[0], username });
     } catch (error) {
       console.log('profile error');
@@ -306,7 +286,6 @@ const userProfile = async (req, res) => {
         return res.render('./error/404'); 
     }
     res.render('./user/productDetails', { orderedProducts: order.Items,username });
-  
   } catch (error) {
     console.error('Error viewing ordered products:', error);
     res.render('./error/404');
@@ -319,18 +298,15 @@ const userProfile = async (req, res) => {
   const cancelOrder = async (req, res) => {
     try {
       const orderId = req.params.orderId;
-      const order = await Order.findById(orderId);
-  
+      const order = await Order.findById(orderId);  
       if (!order) {
         console.log('Order not found');
         return res.render('./error/404');
-      }
-  
+      } 
       if (order.Status === "Order Placed" || order.Status === "Shipped") {
         const productsToUpdate = order.Items;
         for (const product of productsToUpdate) {
-          const cancelProduct = await Products.findById(product.productId);
-       
+          const cancelProduct = await Products.findById(product.productId);      
           if (cancelProduct) {
             cancelProduct.stock += product.quantity;
             await cancelProduct.save();
@@ -363,21 +339,17 @@ const userProfile = async (req, res) => {
                 timestamp: Date.now(),
                 type: 'credit',
               }],
-            });
-    
+            });   
             await newWallet.save();
-            console.log("Wallet updated");
-            
-          }
-    
+            console.log("Wallet updated");            
+          }    
         }
         order.Status = "Cancelled";
         order.PaymentStatus="Refund Completed"
         await order.save();
         return res.redirect("/trackOrder" );
       } else {
-        console.log("Order cannot be cancelled");
-       
+        console.log("Order cannot be cancelled");       
       }
     } catch (error) {
       console.error("Error cancelling the order:", error);
@@ -390,14 +362,12 @@ const cancelproduct = async (req, res) => {
     try {
       const productId = req.params.productId;
       const orderId = req.params.orderId;
-
       const order = await Order.findById(orderId);
       const product = order.Items.find(item => item.productId == productId);
       const productQuantity = product.quantity;
       const products = await Products.findById(productId);
       const newStock = products.stock + productQuantity;
-     await Products.findByIdAndUpdate(productId, { stock: newStock });
-    
+      await Products.findByIdAndUpdate(productId, { stock: newStock });    
       const originalPrice = products.descountedPrice;
       const percentageToAdd = 2;
       const Price = originalPrice * (1 + percentageToAdd / 100);
@@ -409,9 +379,7 @@ const cancelproduct = async (req, res) => {
           $inc: { TotalPrice: -newPrice } 
         }
       );
-
-        return res.redirect("/trackOrder");
-      
+        return res.redirect("/trackOrder");     
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Internal server error' });
@@ -432,19 +400,16 @@ const filterProducts = async (req, res) => {
     const query = req.query.q || '';
     let header=''
     const productQuery = {};
-
     if (categoryid) {
       productQuery.categoryId = categoryid;
       const categorys=await category.findById(categoryid)
       header+=categorys.name
     }
-
     if (brandid) {
       productQuery.brandId = brandid;
       const brand=await Brands.findById(brandid)
       header+=brand.name
     }
-
     // Sorting by price
     const sortOptions = {};
     if (priceSort === 'a-z') {
@@ -452,17 +417,14 @@ const filterProducts = async (req, res) => {
     } else if (priceSort === 'z-a') {
       sortOptions.descountedPrice = -1; // Descending
     }
-
     const totalProducts = await Products.countDocuments(productQuery);
     const products = await Products.find(productQuery)
       .sort(sortOptions)
       .skip((page - 1) * limit)
       .limit(limit);
-
     const totalPages = Math.ceil(totalProducts / limit);
     const categories = await category.find();
     const brands = await Brands.find();
-
     res.render('./user/shop', { viewallProducts: products, username, categories, brands, page, limit, totalProducts, totalPages,header });
   } catch (error) {
     console.log(error);
@@ -479,15 +441,12 @@ const edituserAddress=async(req,res)=>{
       return res.render('./error/404'); 
     }
     const addressToEdit = User.Address.id(addressId);
-
     if (!addressToEdit) {
       return res.render('./error/404'); 
     }
     res.render('./user/editAddress', { address: addressToEdit, username: req.session.name,addressId: addressId });
-
   } catch (error) {
     console.error('%c Error innedirt address:',error, 'color: red; font-weight: bold;');
-
   }
 }
  //delete address
@@ -498,8 +457,7 @@ const deleteAddress = async (req, res) => {
       if (!User) {
           return res.status(404).send('User not found');
       }
-      const addressId = req.params.addressId; 
-      
+      const addressId = req.params.addressId;       
       const userId = User._id;
       console.log(userId)
       await user.findByIdAndUpdate(userId, { $pull: { Address: { _id: addressId } } });
@@ -516,7 +474,6 @@ const address=async(req,res)=>{
     const email=req.session.email;
     const username=req.session.name
     const User = await user.findOne({ email: email });
-
      if (User) {
       res.render('./user/address', {username, User });
     } else {
@@ -538,8 +495,7 @@ const addaddressProfile=async(req,res)=>{
       State: req.body.State,
       Mobile: req.body.Mobile,
   };
-  const userEmail = req.session.email;
-  
+  const userEmail = req.session.email;  
   const User = await user.findOne({ email: userEmail });
   if (!User) {
     return res.render('./error/404');
@@ -547,8 +503,6 @@ const addaddressProfile=async(req,res)=>{
   User.Address.push(addressData);
         await User.save();
         return res.redirect('/address');
-  
- 
   } catch (error) {
     res.render('./error/404')
   }
@@ -563,7 +517,6 @@ try {
       return res.render('./error/404'); 
     }
     const addressToEdit = User.Address.id(addressId);
-
     if (!addressToEdit) {
       return res.render('./error/404'); 
     }
@@ -573,9 +526,7 @@ try {
     addressToEdit.Pincode = req.body.Pincode;
     addressToEdit.State = req.body.State;
     addressToEdit.Mobile = req.body.Mobile;
-
     await User.save();
-
     res.redirect('/address');
 
 } catch (error) {
@@ -594,37 +545,30 @@ const guestfilterProducts = async (req, res) => {
     const query = req.query.q || '';
    let header=''
     const productQuery = {};
-
     if (categoryid) {
       productQuery.categoryId = categoryid;
       const categorys=await category.findById(categoryid)
       header+=categorys.name
     }
-
     if (brandid) {
       productQuery.brandId = brandid;
       const brand=await Brands.findById(brandid)
       header+=brand.name
     }
-
-    // Sorting by price
     const sortOptions = {};
     if (priceSort === 'a-z') {
       sortOptions.descountedPrice = 1; // Ascending
     } else if (priceSort === 'z-a') {
       sortOptions.descountedPrice = -1; // Descending
     }
-
     const totalProducts = await Products.countDocuments(productQuery);
     const products = await Products.find(productQuery)
       .sort(sortOptions)
       .skip((page - 1) * limit)
       .limit(limit);
-
     const totalPages = Math.ceil(totalProducts / limit);
     const categories = await category.find();
     const brands = await Brands.find();
-
     res.render('./user/guestshop', { viewallProducts: products, categories, brands, page, limit, totalProducts, totalPages, header });
   } catch (error) {
     console.log(error);
@@ -638,8 +582,6 @@ const editProfile=async(req,res)=>{
     const newName = req.body.name;
     const newEmail = req.body.email;
     console.log(newName,newEmail)
-
-
     const User = await user.findOne({ email: userEmail });
     console.log(User)
     User.userName = newName;
@@ -648,9 +590,7 @@ const editProfile=async(req,res)=>{
     req.session.name=newName
     if (!User) {
       return res.render('./error/404');
-    }
-
-    
+    }    
     res.json({success:true})
   } catch (error) {
     console.log('Error updating user profile:', error);

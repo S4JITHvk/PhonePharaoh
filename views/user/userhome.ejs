@@ -273,7 +273,7 @@ document.querySelectorAll('.product-card').forEach(productCard => {
                             icon.classList.add('text-danger')
                             swal.fire("item added to your wishlist...")
                         } else {
-                            icon.classList.remove('text-danger')
+                            swal.fire(response.message)
                         }
                     },
                     error: function (error) {

@@ -54,7 +54,7 @@
                         <% if (product.stock) { %>
                           
                             <button class="btn btn1 rounded-3 add-to-cart-button" data-product-id="<%= product._id %>"><i class="fa fa-shopping-cart"></i> Add To Cart</button>
-                            <button class="btn btn1 rounded-3 "> <i class="fa fa-heart"></i> Add To Wishlist </button>
+                            <button class="btn btn1 rounded-3 add-to-wishlist-button" data-product-id="<%= product._id %>"> <i class="fa fa-heart"></i> Add To Wishlist </button>
                         <% } else { %>
                             <p style="color: red; font-size: larger; font-weight: bold;">This product is out of stock</p>
                         <% } %>
@@ -74,7 +74,7 @@
        
     </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     var options = {
@@ -138,7 +138,7 @@
            method: 'POST', 
            success: function (response) {
              
-             alert('Product added to cart');
+            swal.fire('Product added to cart');
              updateCartQuantity();
            },
            error: function (error) {
@@ -149,6 +149,34 @@
      });
    
    
+     document.querySelectorAll('.add-to-wishlist-button').forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+
+
+                const productId = this.getAttribute('data-product-id');
+
+                $.ajax({
+                    url: '/wishlist/'+ productId,
+                    method: 'POST',
+                    data: {
+                        productId: productId,
+                    },
+                    success: function (response) {
+                        
+                        if (response.added) {
+                            
+                            swal.fire("item added to your wishlist...")
+                        } else {
+                           swal.fire(response.message)
+                        }
+                    },
+                    error: function (error) {
+                        console.error('Error updating wishlist:', error);
+                    }
+                });
+            });
+        });
  
  
 

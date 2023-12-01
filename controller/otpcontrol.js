@@ -3,9 +3,7 @@ const generateOTP = require("../util/otpgenerator");
 const sendEmail=require("../util/email");
 const bcrypt=require("bcrypt");
 const {AUTH_EMAIL}=process.env;
-// const hashData=require("../util/hashData")
 const user = require("../models/user")
-const validation=require("../auth/mailvalidation")
 const Products=require("../models/product")
 const Brands=require("../models/brand")
 
@@ -55,10 +53,8 @@ const OtpConfirmation = async (req,res) => {
         const email=req.session.email
         console.log("forgot confirmation :",email);
         const Otp= await OTP.findOne({email:email})
-
         if(Date.now()>Otp.expireAt){
             await OTP.deleteOne({data});
-
         }else{
             const hashed=Otp.otp
             const match=await bcrypt.compare(req.body.code,hashed);
@@ -84,8 +80,7 @@ const OtpConfirmation = async (req,res) => {
     else if(req.session.signotp){
         console.log(req.body)
         try{
-            const data =req.session.data;
-           
+            const data =req.session.data;          
             const dataplus = {
                 userName: data.userName,
                 email: data.email,
@@ -93,29 +88,24 @@ const OtpConfirmation = async (req,res) => {
                 ISactive: true,
                 timeStamp: Date.now()
             }
-            const Otp= await OTP.findOne({email:data.email})
-           
+            const Otp= await OTP.findOne({email:data.email})           
             if(Date.now()>Otp.expiredAt){
                 await OTP.deleteOne({email});
             }else{
                 const hashed=Otp.otp
-                const match=await bcrypt.compare(req.body.code,hashed);
-               
+                const match=await bcrypt.compare(req.body.code,hashed);              
                 if(match){
                     const result=await user.insertMany([dataplus])
-                    req.session.signotp=false
-                   
+                    req.session.signotp=false                 
                     req.flash("successmsg", "Successfully Register ! now you can log in.")
-                    res.redirect("/login")
-    
+                    res.redirect("/login")  
                 }
                 else{
                     req.session.errmsg="Invalid OTP"
                     req.flash("errmsg","Invalid OTP")
                     res.redirect("/user/otp")
                 }
-            }
-             
+            }           
         }catch(err){
             console.log(err);
             res.redirect("/user/otp")
@@ -127,19 +117,15 @@ const OtpConfirmation = async (req,res) => {
 const otpSender = async(req,res)=>{
     if(req.session.signotp || req.session.forgot){
         try{
-            console.log(req.session.email);
-           
-            const email=req.session.email;
-          
+            console.log(req.session.email);           
+            const email=req.session.email;         
             const createdOTP=await sendOTP(email)
-            req.session.email=email;
-   
+            req.session.email=email;  
             req.flash("errmsg","Verify with your otp send to your Email!")
             res.status(200).redirect("/user/otp")
         }catch(err){
             console.log(err);
-            req.session.errmsg="Sorry at this momment we can't sent otp";
-          
+            req.session.errmsg="Sorry at this momment we can't sent otp";       
             if(req.session.forgot){
                 res.redirect("/user/forget-pass")
             }

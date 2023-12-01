@@ -86,7 +86,7 @@
       <br>
       <br>
       <br>
-    
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
       document.querySelectorAll('.add-to-wishlist-button').forEach(button => {
   button.addEventListener('click', function (event) {
@@ -134,7 +134,7 @@
           method: 'POST', 
           success: function (response) {
             
-            alert('Product added to cart');
+           swal.fire('Product added to cart');
             updateCartQuantity();
           },
           error: function (error) {
@@ -144,4 +144,4 @@
       });
     });
 </script>
-        <%- include('../partials/userfooter.ejs') -%>
+        <%- include('../partials/userFooter.ejs') -%>

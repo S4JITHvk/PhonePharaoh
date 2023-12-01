@@ -11,8 +11,7 @@ let mailTransporter=nodemailer.createTransport({
 mailTransporter.verify((error,success)=>{
     if(error){
         console.log(error);
-    }else{
-        
+    }else{        
         console.log(success);
     }
 })
