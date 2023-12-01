@@ -119,7 +119,7 @@ const userhome_get=async (req,res)=>{
 
 // USER SIGNUP
 const usersignup_get=(req,res)=>{
-    res.render("./user/Signup",{title:"Signup",errmsg:req.flash("errmsg")})
+    res.render("./user/signup",{title:"Signup",errmsg:req.flash("errmsg")})
 }
 
 const userSignup = async (req,res) => {

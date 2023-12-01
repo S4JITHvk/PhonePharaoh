@@ -44,7 +44,7 @@ const viewCart = async (req, res) => {
       const couponValue = 50;
       total -= couponValue;
     }
-    res.render("./user/Cart", {
+    res.render("/user/cart", {
       username: username,
       product: cart.products,
       cart,
