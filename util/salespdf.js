@@ -1,71 +1,110 @@
-const ejs = require('ejs');
-const pdf = require('html-pdf');
-const fs = require('fs');
-const exceljs = require('exceljs');
-const dateFormat = require('date-fns/format');
+const PDFDocument = require("pdfkit");
+const moment = require("moment");
 
+// Table Row with Bottom Line
+function generateTableRow(doc, y, c1, c2, c3, c4, c5) {
+  doc
+    .fontSize(10)
+    .text(c1, 50, y)
+    .text(c2, 90, y)
+    .text(c3, 240, y)
+    .text(c4, 400, y)
+    .text(c5, 0, y, { align: "right" })
+    .moveTo(50, y + 15)
+    .lineTo(560, y + 15)
+    .lineWidth(0.5)
+    .strokeColor("#ccc")
+    .stroke();
+}
+
+// Table row without bottom line
+function generateTableRowNoLine(doc, y, c1, c2, c3, c4, c5) {
+  doc
+    .fontSize(10)
+    .text(c1, 100, y)
+    .text(c2, 100, y)
+    .text(c3, 300, y, { width: 90, align: "right" })
+    .text(c4, 600, y, { width: 90, align: "right" })
+    .text(c5, 0, y, { align: "right" });
+}
+
+// Generating Invoice for customers
+const downloadReport = async (orders, startDate, endDate) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const startDateformat = new Date(startDate);
+      const doc = new PDFDocument({ margin: 50 });
+
+      const buffers = [];
+      doc.on("data", (buffer) => buffers.push(buffer));
+      doc.on("end", () => resolve(Buffer.concat(buffers)));
+      doc.on("error", (error) => reject(error));
+
+      // Products
+      // Footer for the PDF
+      doc
+        .fontSize(15)
+        .text(
+            `Sales Report ${
+              startDateformat.toLocaleDateString() 
+              } to ${
+                endDate.toLocaleDateString() 
+              }`
+              ,
+          50,
+          50,
+          {
+            align: "center",
+            width: 500,
+          }
+        );
+
+      const invoiceTableTop = 100;
+
+      // Table Header
+      generateTableRow(
+        doc,
+        invoiceTableTop,
+        "SL No",
+        "Order ID",
+        "User ID",
+        "Order Date",
+        "Amount"
+      );
+
+      let i = 0;
+      let sum = 0;
+      orders.forEach((x) => {
+        var position = invoiceTableTop + (i + 1) * 30;
+        sum += x.TotalPrice;
+        generateTableRow(
+          doc,
+          position,
+          i + 1,
+          x._id,
+          x.UserId,
+          x.OrderDate.toLocaleDateString(),
+          x.TotalPrice
+        );
+        i++;
+      });
+
+      // Summary rows
+      const subtotalPosition = invoiceTableTop + orders.length * 30;
+
+      const paidToDatePosition = subtotalPosition + 30;
+
+      const duePosition = paidToDatePosition + 30;
+      generateTableRowNoLine(doc, duePosition, "", "", "Total", "", sum);
+
+      // End the document
+      doc.end();
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 
 module.exports = {
-    downloadReport: async (req, res, orders, startDate, endDate, totalSales, format) => {
-      const formattedStartDate = dateFormat(new Date(startDate), 'yyyy-MM-dd');
-      const formattedEndDate = dateFormat(new Date(endDate), 'yyyy-MM-dd');
-      console.log(formattedStartDate ,formattedEndDate)
-      try {
-        const totalAmount = parseInt(totalSales)
-        console.log('Total Sales:', totalAmount);
-        const template = fs.readFileSync('util/template.ejs', 'utf-8');
-        const html = ejs.render(template, { orders, startDate:formattedStartDate,
-          endDate:formattedEndDate, totalAmount });
-          console.log(typeof(totalAmount));
-        if (format === 'pdf') {
-          const pdfOptions = {
-            format: 'Letter',
-            orientation: 'portrait',
-          }; 
-          const filePath = `public/SRpdf/sales-report-${formattedStartDate}-${formattedEndDate}.pdf`;
-          pdf.create(html, pdfOptions).toFile(filePath, (err, response) => {
-            if (err) {
-              console.error('Error generating PDF:', err);
-              res.status(500).send('Internal Server Error');
-            } else {
-              res.status(200).download(response.filename);
-            }
-          });
-        } else if (format === 'excel') {
-          const workbook = new exceljs.Workbook();
-          const worksheet = workbook.addWorksheet('Sales Report'); 
-          worksheet.columns = [
-            { header: 'Order ID', key: 'orderId', width: 25 },
-            { header: 'Product Name', key: 'productName', width: 25 },
-            { header: 'User ID', key: 'userId', width: 25},
-            { header: 'Date', key: 'date', width: 25 },
-            { header: 'Total Amount', key: 'totalamount', width: 25 },
-            { header: 'Payment Method', key: 'paymentmethod', width: 25 },
-          ]; 
-          let totalSalesAmount = 0;  
-          orders.forEach(order => {
-            order.Items.forEach(item => {
-              worksheet.addRow({
-                orderId: order._id,
-                productName: item.productId.name,
-                userId: order.UserId,
-                date: order.OrderDate ? new Date(order.OrderDate).toLocaleDateString() : '',
-                totalamount: order.TotalPrice !== undefined ? order.TotalPrice.toFixed(2) : '',
-                paymentmethod: order.PaymentMethod,
-              }); 
-              totalSalesAmount += order.TotalPrice !== undefined ? order.TotalPrice : 0;              
-            });
-          });         
-          worksheet.addRow({ totalamount: 'Total Sales Amount', paymentmethod: totalSalesAmount.toFixed(2) }); 
-          const excelFilePath = `public/SRexcel/sales-report-${formattedStartDate}-${formattedEndDate}.xlsx`;
-          await workbook.xlsx.writeFile(excelFilePath);
-          res.status(200).download(excelFilePath);
-        } else {
-          res.status(400).send('Invalid download format');
-        }
-      } catch (error) {
-        console.error('Error generating report:', error);
-        res.status(500).send('Internal Server Error');
-      }
-    },
+  downloadReport,
 };

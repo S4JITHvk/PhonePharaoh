@@ -195,10 +195,8 @@ const product_list = async (req, res) => {
     try {
       console.log(req.body)
         const startDate = req.body.startDate;
-        const format = req.body.downloadFormat;
         const endDate = new Date(req.body.endDate);
         endDate.setHours(23, 59, 59, 999);
-        console.log(startDate,format,endDate )
         const orders = await Order.find({
             PaymentStatus: "Paid",
             OrderDate: {
@@ -206,20 +204,18 @@ const product_list = async (req, res) => {
                 $lte: endDate,
             },
         }).populate("Items.productId");
-        let totalSales = 0;
-        orders.forEach((order) => {
-            totalSales += order.TotalPrice || 0;
-        });
-        pdf.downloadReport(
-            req,
-            res,
+        const pdfBuffer = await pdf.downloadReport(
             orders,
             startDate,
             endDate,
-            totalSales.toFixed(2),
-            format
         );
-       
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader(
+          "Content-Disposition",
+          "attachment; filename=sales Report.pdf"
+        );
+    
+        res.status(200).end(pdfBuffer);
     } catch (error) {
         console.log("Error while generating sales report pdf:", error);
         res.status(500).json({
