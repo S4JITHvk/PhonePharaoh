@@ -26,40 +26,39 @@
                         <h1>No Coupons Available</h1>
                     </div>
                 <% } else { %>
-                    <% coupon.forEach(coupon => { %>
-                        <div class="col-md-3">
-                            <div class="coupon-card glow-on-hover shadow-lg ">
-                                <div class="coupon-image">
-                                    <img src="/static/assets/coupon2.png" alt=""
-                                        style="max-width: 100px; height: auto; ">
+                    <div class="container mt-5">
+                        <div class="row">
+                            <% coupon.forEach((x)=> {%>
+                                <div class="coupon-card border shadow rounded col-6 col-md-3 m-3" style="background: #ffe5ae; height: 400px;">
+                                    <img src="/static/assets/coupon2.png" width="150" alt="Coupon Image">
+                                    <!-- <p class="discription"><%=x.description%></p> -->
+                                    <h4>
+                                        <%=x.description%>
+                                    </h4>
+                                    <p>MinPurchaseAmount : Rs.<%= x.minPurchaseAmount %></p>
+                                    <p style="color: red;">Discount : <%= x.discount %>%</p>
+                                    <p>MaxdiscountAmount : Rs.<%= x.maxdiscountAmount %></p>
+                                    <% if (new Date() < new Date(x.expiryDate)) { %>
+                                        <p class="expiredate">
+                                            <b>
+                                                Expires on :<%= new Date(x.expiryDate).toLocaleDateString() %>
+                                            </b>
+                                        </p>
+                                        <button class="use-button" data-coupon-code="<%= x.couponCode %>">Copy</button>
+                                        
+                                    <% } else { %>
+                                        <p class="expiredate">
+                                            <b>
+                                                EXPIRED
+                                            </b>
+                                        </p>
+                                       
+                                    <% } %>
                                 </div>
-
-                                <div class="coupon-card-body">
-                                    <h5 class="coupon-title"><%= coupon.description %></h5>
-                                    <div class="coupon-details">
-                                        <p>MinPurchaseAmount : Rs.<%= coupon.minPurchaseAmount %></p>
-                                        <p style="color: red;">Discount : <%= coupon.discount %>%</p>
-                                        <p>MaxdiscountAmount : Rs.<%= coupon.maxdiscountAmount %></p>
-                                        <% if (new Date() < new Date(coupon.expiryDate)) { %>
-                                            <p class="card-text fw-bold">Expiry Date: <%= new Date(coupon.expiryDate).toLocaleDateString() %></p>
-                                            <div class="mt-2">
-                                                <a href="" class="use-button"
-                                                    data-coupon-code="<%= coupon.couponCode %>">Use</a>
-                                            </div>
-                                        <% } else { %>
-                                            <p class="card-text text-danger fw-bold">EXPIRED </p>
-                                            <div class="mt-2">
-                                                <a href="" class="btn" data-coupon-code=""></a>
-                                            </div>
-                                        <% } %>
-                                    </div>
-
-                                </div>
-                            </div>
+                            <% }) %>
                         </div>
-                    <% }); %>
+                    </div>
                 <% } %>
-
             </div>
         </div>
     <br>
