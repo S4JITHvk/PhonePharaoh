@@ -228,7 +228,7 @@ const orderHistory = async (req, res) => {
       if (orders.length === 0) {
           return res.render('./user/orderhistory', { username, orders: [], totalOrders,  page,  totalPages: Math.ceil(totalOrders / limit ),limit });
       } else {
-          res.render('./user/orderHistory', {
+          res.render('./user/orderhistory', {
               username,
               orders: orders,
               totalOrders,
