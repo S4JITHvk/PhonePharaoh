@@ -72,13 +72,8 @@ padding-top: 15px;
                                 <h6 style="margin-left: 8px;"> You got <span class="badge rounded-pill bg-warning text-dark">  <%= item.discountPercent %>% OFF </span> for this Product</h6>
                             <% } %>
                       <br> Quantity: <%= item.quantity %>
-                            <br> Product Price: <span class="text-yellow"><%= item.productprice %></span> 
+                            <br> Product Price: <span class="text-yellow"><%= item.quantity * item.productprice %></span> 
                         </li>
-                        <% if(order.Items.length > 1 && order.Status !== "Cancelled" && order.Status !== "Delivered" && order.Status !== "Returned" ) { %>
-                            <div class="d-flex justify-content-between align-items-center"> <!-- Added a wrapper div -->
-                                <a href="#" class="btn btn-danger" onclick="confirmRemove('<%= item.productId._id %>', '<%= order._id %>')">Remove</a>
-                            </div>
-                        <% } %>
                     <% }); %>
                     
                     </ul>
@@ -170,7 +165,15 @@ padding-top: 15px;
                                                 <span class="py-1 px-2 rounded text-white" style="background-color: #f37a27;">Order Returned</span> 
                                               </li>
                                              
-                                          <% } %>
+                                          <% } else if(order.Status === "Return Accepted" ) { %> 
+                                            <li class="list-inline-item items-list text-end " style="margin-right: 8px;">
+                                              <span class="py-1 px-2 rounded text-white" style="background-color: #f37a27;">Returned Accepted</span> 
+                                            </li>
+                                           
+                                        <% } %>
+                                          
+                                          
+                                         
                                    
                                    
                                 </ul>
@@ -298,21 +301,39 @@ Swal.fire({
   }
 })
 
-      try {
-          const response = await fetch('/downloadinvoice', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json', 
-              },
-              body: JSON.stringify({ orderId }) 
-          });
-          if (response.ok) {
-            
-              window.location.href = `/downloadinvoice/${orderId}`;
-          }
-      } catch (error) {
-          console.error('Error in downloading the invoice:', error);
-      }
+try {
+    const response = await fetch('/downloadinvoice', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderId })
+    });
+
+    if (response.ok) {
+        const pdfContent = await response.blob();
+        const blob = new Blob([pdfContent], { type: 'application/pdf' });
+
+        // Create a link element
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+
+        // Set the filename for the download
+        link.download = 'invoice.pdf';
+
+        // Append the link to the document and trigger the click event
+        document.body.appendChild(link);
+        link.click();
+
+        // Remove the link from the document
+        document.body.removeChild(link);
+    } else {
+        console.error('Error in downloading the invoice:', response.statusText);
+    }
+} catch (error) {
+    console.error('Error in downloading the invoice:', error);
+}
+
   }
     </script>
     

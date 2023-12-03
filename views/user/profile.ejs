@@ -32,12 +32,15 @@
                                         <label class="labels">Name</label>
                                         <input type="text" class="form-control" placeholder="Name" id="name"
                                             value="<%= profile.userName %>" />
+                                            <span id="nameError" class="text-danger"></span>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="labels">Email</label>
-                                        <input type="text" class="form-control" placeholder="Email" id="email"
-                                            value="<%= profile.email %>" />
-                                    </div>
+                                    <!-- Inside the form -->
+<div class="mb-3">
+  <label class="labels">Email</label>
+  <input type="email" class="form-control" placeholder="Email" id="email" value="<%= profile.email %>" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" title="Enter a valid email address" required />
+  <span id="emailError" class="text-danger"></span>
+</div>
+
 
                                     <br>
                                     <div class="d-flex justify-content-around">
@@ -51,75 +54,68 @@
                     </div>
                 </div>
 
-                <div class="col-md-10 mt-5">
-                    <div class="card shadow border">
-                        <div class="card-body d-flex ">
-                            <div class="col-md-2 m-2">
-                <div class="card shadow border ">
-                  <div class="card-body  justify-content-center">
-                   <a href="/trackOrder" style="text-decoration: none; color: black;">
-                    <i class="fa-solid fa-clock-rotate-left fa-2xl" style="color: #000000" ></i>
-                    <br>
-                    <h5>Orders</h5>
-                   </a>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-md-2 m-2">
                 <div class="card shadow border">
-                  <div class="card-body">
-                    <a href="/user/cart" style="text-decoration: none; color: black;">
-                    <i
-                      class="fa-solid fa-cart-shopping fa-2xl"
-                      style="color: #000000"
-                    ></i>
-                    <h5>Cart</h5>
+                  <div class="card-body d-flex row justify-content-center">
+              
+                      <div class="col-md-2 m-2">
+                          <div class="card shadow border ">
+                              <div class="card-body  justify-content-center">
+                                  <a href="/trackOrder" style="text-decoration: none; color: black;">
+                                      <i class="fa-solid fa-clock-rotate-left fa-2xl" style="color: #000000"></i>
+                                      <br>
+                                      <h5>Orders</h5>
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+              
+                      <div class="col-md-2 m-2">
+                          <div class="card shadow border">
+                              <div class="card-body">
+                                  <a href="/user/cart" style="text-decoration: none; color: black;">
+                                      <i class="fa-solid fa-cart-shopping fa-2xl" style="color: #000000"></i>
+                                      <h5>Cart</h5>
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+              
+                      <div class="col-md-2 m-2">
+                          <div class="card shadow border">
+                              <div class="card-body">
+                                  <a href="/address" style="text-decoration: none; color: black;">
+                                      <i class="fa-solid fa-location-dot fa-2xl" style="color: #00060f"></i>
+                                      <h5>Address</h5>
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+              
+                      <div class="col-md-2 m-2">
+                          <div class="card shadow border">
+                              <div class="card-body">
+                                  <a href="/user/wishlist" style="text-decoration: none; color: black;">
+                                      <i class="fa-solid fa-heart fa-2xl" style="color: #000000"></i>
+                                      <h5>Wishlist</h5>
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+              
+                      <div class="col-md-2 m-2">
+                          <div class="card shadow border">
+                              <div class="card-body">
+                                  <a href="/user/coupon" style="text-decoration: none; color: black;">
+                                      <i class="fa-solid fa fa-gift fa-2xl" style="color: #000000"></i>
+                                      <h5>Coupon</h5>
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+              
                   </div>
-                </div>
               </div>
-
-              <div class="col-md-2 m-2">
-                <div class="card shadow border">
-                  <div class="card-body">
-                    <a href="/address" style="text-decoration: none; color: black;">
-                    <i
-                      class="fa-solid fa-location-dot fa-2xl"
-                      style="color: #00060f"
-                    ></i>
-                    <h5>Address</h5>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-md-2 m-2">
-                <div class="card shadow border">
-                  <div class="card-body">
-                    <a href="/user/wishlist" style="text-decoration: none; color: black;">
-                    <i
-                      class="fa-solid fa-heart fa-2xl"
-                      style="color: #000000"
-                    ></i>
-                    <h5>Wishlist</h5>
-                  </div>
-                </div>
-              </div>
-
-               <div class="col-md-2 m-2"> 
-                <div class="card shadow border">
-                  <div class="card-body">
-                    <a href="/user/coupon" style="text-decoration: none; color: black;">
-                    <i
-                      class="fa-solid fa fa-gift fa-2xl"
-                      style="color: #000000"
-                    ></i>
-                    <h5>Coupan</h5>
-                  </div>
-                </div>
-              </div> 
-                        </div>
-                    </div>
-                </div>
+              
             </div>
         </div>
     </section>
@@ -135,40 +131,57 @@
         integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
         crossorigin="anonymous"></script>
 
-    <script>
-        document.getElementById('profileForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-
-            const formData = {
-                name: name,
-                email: email,
-            };
-
-            fetch('/updateProfile', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Profile updated successfully!');
-                        setTimeout(() => {
-                            window.location.reload();
-                        }, 1000);
-                    } else {
-                        alert('Failed to update profile.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        });
-    </script>
+        <script>
+          document.getElementById('profileForm').addEventListener('submit', function (event) {
+              event.preventDefault();
+      
+              const name = document.getElementById('name').value;
+              const email = document.getElementById('email').value;
+              const emailError = document.getElementById('emailError');
+              const nameError = document.getElementById('nameError');
+              if (name.trim() === '') {
+            nameError.textContent = 'Please enter a name.';
+            return; // Stop form submission
+        }
+              // Validate email
+              const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i;
+              if (!emailRegex.test(email)) {
+                  emailError.textContent = 'Please enter a valid email address.';
+                  return; // Stop form submission
+              }
+               
+              // Clear previous error messages
+              emailError.textContent = '';
+              nameError.textContent = '';
+              // Continue with form submission
+              const formData = {
+                  name: name,
+                  email: email,
+              };
+      
+              fetch('/updateProfile', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(formData),
+              })
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.success) {
+                          alert('Profile updated successfully!');
+                          setTimeout(() => {
+                              window.location.reload();
+                          }, 1000);
+                      } else {
+                          alert('Failed to update profile.');
+                      }
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                  });
+          });
+      </script>
+      
 
     <%-include('../partials/userFooter') %>

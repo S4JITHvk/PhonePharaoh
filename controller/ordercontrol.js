@@ -399,18 +399,6 @@ const returnaccept = async (req, res) => {
 
 
 // INOVICE DOWNLOADER
-const downloadInvoice = async (req, res) => {
-  try {
-    const id = req.params.orderId;
-    const filePath = `C:\\Users\\lenovo\\Desktop\\E-COMMERCE website\\public\\pdf\\${id}.pdf`;
-    res.download(filePath, `invoice.pdf`);
-  } catch (error) {
-    console.error("Error in downloading the invoice:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Error in downloading the invoice" });
-  }
-};
 const generateInvoices = async (req, res) => {
   try {
     const { orderId } = req.body;    
@@ -419,24 +407,27 @@ const generateInvoices = async (req, res) => {
       .populate("Items.productId");  
     const ordersId = orderDetails[0]._id;
     if (orderDetails) {
-      const invoicePath = await generateInvoice(orderDetails);  
-      res.json({
-        success: true,
-        message: "Invoice generated successfully",
-        invoicePath,
-      });
+      const pdfContent = await generateInvoice(orderDetails);
+
+      // Set the response headers for downloading the PDF
+      res.setHeader('Content-Disposition', `attachment; filename="invoice.pdf"`);
+      res.setHeader('Content-Type', 'application/pdf');
+
+      // Send the PDF content in the response
+      res.send(Buffer.from(pdfContent, 'base64'));
     } else {
       res
         .status(500)
         .json({ success: false, message: "Failed to generate the invoice" });
     }
   } catch (error) {
-    console.error("error in invoice downloading====",error);
+    console.error("Error in generating the invoice:", error);
     res
       .status(500)
       .json({ success: false, message: "Error in generating the invoice" });
   }
 };
+
 
 
 module.exports={
@@ -450,6 +441,5 @@ module.exports={
     orderSuccess,
     returnProduct,
     generateInvoices,
-    downloadInvoice ,
     returnaccept
 }

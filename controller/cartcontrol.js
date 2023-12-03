@@ -153,6 +153,7 @@ const updateQuantity = async (req, res) => {
     const gstAmount = subtotal * gstRate;
     const coupon = "";
     let total = subtotal + gstAmount;
+    req.session.totalPrice = total;
     if (coupon) {
       const couponValue = 50;
       total -= couponValue;

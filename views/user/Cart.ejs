@@ -68,8 +68,7 @@
                     <div class="float-md-end">
                       <strong class="card-text text-center text-danger out-of-stock-message" id=""
                         style="display: none;"> </strong>
-                      <a href="#!" class="btn btn-light border px-2 icon-hover-primary"><i class="fa-solid fa fa-heart"
-                          style="color: #000000;"></i></a>
+                     
                           <a href="#" class="btn btn-light border text-danger icon-hover-danger"
                           onclick="removeFromCart('<%= data.productId._id %>','<%= cart._id %>')">Remove</a>
                     </div>
@@ -180,27 +179,31 @@ function quantityChanger(productId, stock, count, cartId) {
 
 
   $.ajax({
-    url: '/updatequantity', 
-    method: 'POST', 
+    url: '/updatequantity',
+    method: 'POST',
     data: {
-      productId: productId,
-      quantity: currentQuantity,
-      cartId: cartId,
+        productId: productId,
+        quantity: currentQuantity,
+        cartId: cartId,
     },
     success: function (response) {
-      console.log("Response from the server:", response);
+        console.log("Response from the server:", response);
 
-      $('#subtotalAmount').text( + response.subtotal.toFixed(2));
-      $('#gstAmount').text('Rs. ' + response.gstAmount.toFixed(2));
-      $('#totalQuantityValue').text(response.totalQuantity);
-      $('#totalPrice').text('Rs. ' + response.total.toFixed(2));
+        // Use Math.floor to round down the amounts
+        var subtotalAmount = Math.floor(response.subtotal);
+        var gstAmount = Math.floor(response.gstAmount);
+        var total = Math.floor(response.total);
 
+        $('#subtotalAmount').text(subtotalAmount.toFixed(2));
+        $('#gstAmount').text('Rs. ' + gstAmount.toFixed(2));
+        $('#totalQuantityValue').text(response.totalQuantity);
+        $('#totalPrice').text('Rs. ' + total.toFixed(2));
+
+        console.log("Updated quantity successfully");
     }
-  });
+});
+}
 
-      console.log("updated quantity successfully");
-
-    }
 
     function removeFromCart(productId, cartId) {
   // Use SweetAlert for confirmation

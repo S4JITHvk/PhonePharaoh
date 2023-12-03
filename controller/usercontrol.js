@@ -357,34 +357,7 @@ const userProfile = async (req, res) => {
     }
   };
   
-// Cancel order when multiple product
-const cancelproduct = async (req, res) => {
-    try {
-      const productId = req.params.productId;
-      const orderId = req.params.orderId;
-      const order = await Order.findById(orderId);
-      const product = order.Items.find(item => item.productId == productId);
-      const productQuantity = product.quantity;
-      const products = await Products.findById(productId);
-      const newStock = products.stock + productQuantity;
-      await Products.findByIdAndUpdate(productId, { stock: newStock });    
-      const originalPrice = products.descountedPrice;
-      const percentageToAdd = 2;
-      const Price = originalPrice * (1 + percentageToAdd / 100);
-      const newPrice=parseInt(Price)
-      const result = await Order.updateOne(
-        { _id: orderId },
-        {
-          $pull: { Items: { productId: productId } },
-          $inc: { TotalPrice: -newPrice } 
-        }
-      );
-        return res.redirect("/trackOrder");     
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  };
+
   
 //Filter 
 
@@ -616,7 +589,6 @@ module.exports = {
     userProfile,
     cancelOrder,
     vieworderedProduct,
-    cancelproduct,
     deleteAddress,
     address,
     edituserAddress,
