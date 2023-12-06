@@ -12,72 +12,72 @@
 </head>
 <body>
 
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-6 mx-auto">
-      <div class="card shadow border mt-5">
-        <div class="card-header bg-success text-white">
-          <h5 class="card-title text-center">Your Wallet</h5>
-        </div>
-        <div class="card-header bg-info text-white">
-          <h6 class="card-subtitle text-center">Amount</h6>
-        </div>
-        <div class="card-body">
-          <div class="border-right">
-            <div class="d-flex flex-column align-items-center text-center p-3 py-5">
-              <h2>
-                <% if (Wallet) { %>
-                  <p class="font-weight-bold text-success">$<%= Wallet.Amount %></p>
-                <% } else { %>
-                  <p class="font-weight-bold text-success">$0</p>
-                <% } %>
-              </h2>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-6 mx-auto">
+        <div class="card shadow border mt-5">
+          <div class="card-header bg-success text-white">
+            <h5 class="card-title text-center">Your Wallet</h5>
+          </div>
+          <div class="card-header bg-info text-white">
+            <h6 class="card-subtitle text-center">Amount</h6>
+          </div>
+          <div class="card-body">
+            <div class="border-right">
+              <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                <h2>
+                  <% if (Wallet) { %>
+                    <p class="font-weight-bold text-success">₹<%= Wallet.Amount %></p>
+                  <% } else { %>
+                    <p class="font-weight-bold text-success">$0</p>
+                  <% } %>
+                </h2>
+              </div>
             </div>
-            
-            <div class="d-flex flex-column align-items-center text-center p-3 py-3">
-              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#walletHistoryModal">
-                View Wallet History
-              </button>
+          </div>
+        </div>
+  
+        <!-- Move the following div inside the col-md-6 -->
+        <div class="card shadow mt-3">
+          <div class="card-body">
+            <h4 class="card-title">Wallet Transactions:</h4>
+            <br>
+            <div class="table-responsive">
+              <% if (Wallet && Wallet.transactions.length > 0) { %>
+                <table class="table table-striped mt-3" style="font-size: 12px;">
+                  <thead>
+                    <tr>
+                      <th class="text-center align-middle">Transaction</th>
+                      <th class="text-center align-middle">Amount</th>
+                      <th class="text-center align-middle">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% Wallet.transactions.forEach(transaction => { %>
+                      <tr>
+                        <td class="text-center align-middle"><%= transaction.type %></td>
+                        <td class="text-center align-middle <%= transaction.type === 'credit' ? 'text-success' : 'text-danger' %>">
+                          <%= transaction.type === 'credit' ? '+ ' : '- ' %>₹ <%= parseFloat(transaction.amount).toLocaleString() %>
+                        </td>
+                        <td class="text-center align-middle"><%= transaction.timestamp.toLocaleString() %></td>
+                      </tr>
+                    <% }) %>
+                  </tbody>                  
+                </table>
+              <% } else { %>
+                <p>No transactions available</p>
+              <% } %>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-<br>
-<br>
+  
+  <br>
+  <br>
 
-<div class="modal fade" id="walletHistoryModal" tabindex="-1" role="dialog" aria-labelledby="walletHistoryModalLabel" aria-hidden="true" data-bs-backdrop="static">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="walletHistoryModalLabel">Wallet History</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-   
-        <% if (Wallet && Wallet.transactions.length > 0) { %>
-          <ul>
-              <% Wallet.transactions.forEach(transaction => { %>
-                  <% if (transaction.type === 'credit') { %>
-                      <li style="color: green;">Credited: +$<%= transaction.amount %> - <%= transaction.timestamp.toLocaleString() %></li>
-                  <% } else if (transaction.type === 'debit') { %>
-                      <li style="color: red;">Debited: -$<%= transaction.amount %> - <%= transaction.timestamp.toLocaleString() %></li>
-                  <% } %>
-              <% }) %>
-          </ul>
-      <% } else { %>
-          <p>No transactions available</p>
-      <% } %>
-      
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
+
 <%- include('../partials/userFooter') %>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-M...
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-M...

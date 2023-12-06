@@ -99,8 +99,12 @@ const postCheckout=async(req,res)=>{
         const newOrders = new Order({
             UserId: userid,
             Items: cart.products,
-            OrderDate: new Date(), 
-            ExpectedDeliveryDate: moment().add(4, "days").toDate(),
+            OrderDate:new Date().toLocaleString("en-US", {
+              timeZone: "Asia/Kolkata",
+          }),
+            ExpectedDeliveryDate: new Date(
+              Date.now() + 7 * 24 * 60 * 60 * 1000
+          ).toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
             TotalPrice: price,
             Address:add,
             PaymentMethod: PaymentMethod,
@@ -165,7 +169,9 @@ const postCheckout=async(req,res)=>{
                     $push: {
                         transactions: {
                             amount: price,
-                            timestamp: Date.now(),
+                            timestamp: new Date().toLocaleString("en-US", {
+                              timeZone: "Asia/Kolkata",
+                          }),
                             type: 'debit',
                         },
                     },
@@ -201,7 +207,6 @@ const postCheckout=async(req,res)=>{
        res.render('./error/404')
       }
     }
-
     const orderSuccess=(req,res)=>{
       const username = req.session.name
       res.render('./user/orderSuccess',{username})  
@@ -364,7 +369,9 @@ const returnaccept = async (req, res) => {
             $push: {
               transactions: {
                 amount: order.TotalPrice,
-                timestamp: Date.now(),
+                timestamp: new Date().toLocaleString("en-US", {
+                  timeZone: "Asia/Kolkata",
+              }),
                 type: 'credit',
               },
             },
@@ -376,7 +383,9 @@ const returnaccept = async (req, res) => {
           Amount: order.TotalPrice,
           transactions: [{
             amount: order.TotalPrice,
-            timestamp: Date.now(),
+            timestamp:new Date().toLocaleString("en-US", {
+              timeZone: "Asia/Kolkata",
+          }),
             type: 'credit',
           }],
         });
