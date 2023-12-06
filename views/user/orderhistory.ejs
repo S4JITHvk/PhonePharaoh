@@ -86,6 +86,11 @@ padding-top: 15px;
                       Total Price:
                       <span class="blue-text"><b><%= order.TotalPrice %> Rs only (Included GST 2%)</b></span>
                     </p>
+                    <% if (order.coupon) { %>
+                      <p class="card-text text-yellow fw-bold">
+                        Coupon:You got ₹<%= order.coupon %> discount (Coupon Applied)
+                      </p>
+                    <% }%>
                     <% if (order.Status === 'Return Accepted') { %>
                       <p class="card-text fw-bold">
                         Order Status: <%= order.Status %>

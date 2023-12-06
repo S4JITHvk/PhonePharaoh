@@ -107,13 +107,14 @@ const coupon_check = async (req, res) => {
         console.log(couponMatch.maxdiscountAmount)
         if (amt >= couponMatch.minPurchaseAmount) {
           console.log(couponMatch.discount)
-          discount = (amt * couponMatch.discount / 100);
+          discount = Math.floor((amt * couponMatch.discount / 100));
           console.log(discount,"====")
           if (discount > couponMatch.maxdiscountAmount) {          
-            discount = couponMatch.maxdiscountAmount;
+            discount = couponMatch.maxdiscountAmount;  
             console.log( discount)
         }
           req.session.totalPrice=amt-discount
+          req.session.coupondiscount=discount
             req.session.code = couponMatch.couponCode;
             return res.json({ success: true,discount });
           

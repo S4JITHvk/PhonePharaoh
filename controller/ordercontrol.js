@@ -51,7 +51,7 @@ const postCheckout=async(req,res)=>{
         const amount = req.session.totalPrice;
         const couponCode=req.session.code
         const price=parseInt(amount)
-   
+   console.log(req.session.coupondiscount,"===>")
       
         const user = await User.findOne({
           email:Email,
@@ -105,6 +105,7 @@ const postCheckout=async(req,res)=>{
             ExpectedDeliveryDate: new Date(
               Date.now() + 7 * 24 * 60 * 60 * 1000
           ).toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+           coupon:req.session.coupondiscount,
             TotalPrice: price,
             Address:add,
             PaymentMethod: PaymentMethod,

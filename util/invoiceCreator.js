@@ -8,6 +8,7 @@ module.exports = {
             // Convert OrderDate to local format
             const orderDate = new Date(orderDetails[0].OrderDate);
             const localOrderDate = orderDate.toLocaleDateString();
+            
 
             var data = {
                 "customize": {},
@@ -31,7 +32,7 @@ module.exports = {
                 },
                 "information": {
                     "Order ID": orderDetails[0]._id,
-                    "date": localOrderDate,  // Use the converted local date
+                    "date": localOrderDate, 
                     "invoice date": localOrderDate,
                 },
                 "products": (orderDetails[0].Items && orderDetails[0].Items.length > 0) ? orderDetails[0].Items.map((product) => ({
@@ -40,7 +41,7 @@ module.exports = {
                     "tax-rate": 2,
                     "price": product.productId.descountedPrice
                 })) : [],
-                "total": orderDetails[0].totalPrice,   
+
                 "bottom-notice": "Thank You For Your Purchase",
                 "settings": {
                     "currency": "INR",

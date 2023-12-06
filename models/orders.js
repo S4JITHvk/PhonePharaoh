@@ -14,6 +14,7 @@ const OrdersSchema = new Schema({
   PaymentMethod: {type: String},
   OrderDate: { type: Date },
   ExpectedDeliveryDate:{type: String},
+  coupon:{type:Number},
   TotalPrice: { type: Number },
   PaymentStatus: {type: String, default: "Pending"},
   CouponId: { type: Schema.Types.ObjectId },
