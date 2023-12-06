@@ -24,7 +24,6 @@ const PlaceOrder=async(req,res)=>{
     const cart = await Cart.findOne({ userId: userid }).populate(
       "products.productId"
     );
-    const product = cart.products;
     let subtotal = 0;
     let totalQuantity = 0;
     cart.products.forEach((item) => {
