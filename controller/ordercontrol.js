@@ -19,10 +19,22 @@ const PlaceOrder=async(req,res)=>{
   try{
     const email = req.session.email;
     const username=req.session.name
-    const total=req.session.totalPrice
-  
     const user = await User.findOne({ email: email })
     const userid=user._id
+    const cart = await Cart.findOne({ userId: userid }).populate(
+      "products.productId"
+    );
+    const product = cart.products;
+    let subtotal = 0;
+    let totalQuantity = 0;
+    cart.products.forEach((item) => {
+      subtotal += item.quantity * item.productId.descountedPrice;
+      totalQuantity += item.quantity;
+    });
+    const gstRate = 0.02;
+    const gstAmount = subtotal * gstRate;
+    const total = subtotal + gstAmount;
+    req.session.totalPrice = total;
    const Wallet = await wallet.findOne({ userId: userid }); 
    
 
@@ -51,7 +63,6 @@ const postCheckout=async(req,res)=>{
         const amount = req.session.totalPrice;
         const couponCode=req.session.code
         const price=parseInt(amount)
-   console.log(req.session.coupondiscount,"===>")
       
         const user = await User.findOne({
           email:Email,

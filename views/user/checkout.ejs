@@ -283,7 +283,7 @@
       <input type="text" class="form-control" id="couponCodeInput" placeholder="Coupon Code" aria-label="Coupon Code">
       <button class="btn btn-dark" id="applyCouponButton">Apply Coupon</button>
     </div>
-    <a href="/user/coupon">Available coupons</a>
+    <a href="/user/coupon" id="availableCouponsLink">Available coupons</a>
     <div id="couponDiscountDisplay" class="mb-3">
   <p class="fw-bold">Coupon Discount: Rs. <span class="text-danger" id="couponDiscount">0.00</span></p>
   <p class="fw-bold">Total Amount: Rs. <span class="badge rounded-pill bg-warning text-dark"  id="totalAmount"><%=Math.floor( total) %> <i class="fa fa-inr" aria-hidden="true"></i></span></p>
@@ -360,6 +360,7 @@
     e.preventDefault();
     const couponCode = document.getElementById('couponCodeInput').value;
     var flashMessage = $('#flashMessage');
+    var availableCouponsLink = document.getElementById('availableCouponsLink');
 
     $.ajax({
         url: '/checkcoupon',
@@ -374,6 +375,7 @@
   var finalAmount = totalAmount - response.discount;
   document.getElementById('finalAmount').innerText = finalAmount.toFixed(2);
   document.getElementById('finalAmountContainer').style.display = 'block';
+  availableCouponsLink.style.display = 'none';
   Swal.fire('', 'Coupon Applied', 'success');
             } else {
                 console.log("inside elseee");
