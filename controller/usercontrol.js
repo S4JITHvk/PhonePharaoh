@@ -343,9 +343,9 @@ const userProfile = async (req, res) => {
             await newWallet.save();
             console.log("Wallet updated");            
           }    
+          order.PaymentStatus="Refund Completed"
         }
         order.Status = "Cancelled";
-        order.PaymentStatus="Refund Completed"
         await order.save();
         return res.redirect("/trackOrder" );
       } else {
