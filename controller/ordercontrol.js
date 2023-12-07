@@ -316,6 +316,18 @@ const updateOrderStatus = async (req, res) => {
   try {
       const orderId = req.params.orderId;
       const newStatus = req.body.status;
+
+      if(newStatus==="Rejected"){
+        const order= await Order.findById( orderId )
+        const productsToUpdate = order.Items;
+        for (const product of productsToUpdate) {
+          const cancelProduct = await Product.findById(product.productId);      
+          if (cancelProduct) {
+            cancelProduct.stock += product.quantity;
+            await cancelProduct.save();
+          }
+        }   
+      }
       await Order.findByIdAndUpdate(orderId, { Status: newStatus });
       if (newStatus === "Delivered") {
           await Order.findByIdAndUpdate(orderId, { PaymentStatus: "Paid" });
@@ -366,6 +378,14 @@ const returnaccept = async (req, res) => {
     const order = await Order.findById(orderId);
     const userid = order.UserId;
     if (order) {
+      const productsToUpdate = order.Items;
+      for (const product of productsToUpdate) {
+        const cancelProduct = await Product.findById(product.productId);      
+        if (cancelProduct) {
+          cancelProduct.stock += product.quantity;
+          await cancelProduct.save();
+        }
+      }
       const userExist = await wallet.findOne({ userId: userid });
       if (userExist) {
         await wallet.updateOne(
