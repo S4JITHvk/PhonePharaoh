@@ -18,7 +18,7 @@ const viewCart = async (req, res) => {
       "products.productId"
     );
     if (!cart || cart.products.length === 0) {
-      return res.render("./user/cart", {
+      return res.render("./user/Cart", {
         username: username,
         product: [],
         subtotal: 0,
@@ -44,7 +44,7 @@ const viewCart = async (req, res) => {
       const couponValue = 50;
       total -= couponValue;
     }
-    res.render("./user/cart", {
+    res.render("./user/Cart", {
       username: username,
       product: cart.products,
       cart,
