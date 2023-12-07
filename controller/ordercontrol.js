@@ -35,11 +35,7 @@ const PlaceOrder=async(req,res)=>{
     const total = subtotal + gstAmount;
     req.session.totalPrice = total;
    const Wallet = await wallet.findOne({ userId: userid }); 
-   
-
     const walletamount = Wallet ? Wallet.Amount : 0;
-
-
 res.render('./user/checkout', {username, user,total,walletamount})
   }catch(error){
     console.log(error)
@@ -62,7 +58,6 @@ const postCheckout=async(req,res)=>{
         const amount = req.session.totalPrice;
         const couponCode=req.session.code
         const price=parseInt(amount)
-      
         const user = await User.findOne({
           email:Email,
           Address:{

@@ -418,6 +418,23 @@
   });
   return;
 }
+if (selectedPaymentMethod === "online") {
+        Swal.fire({
+            icon: "warning",
+            title: "Online Payment",
+            text: "You have selected online payment. Please do the payment process correctly, once the order will be placed it cannot be reversed. Do you want to proceed?",
+            showCancelButton: true,
+            confirmButtonText: "Yes, proceed",
+            cancelButtonText: "Cancel",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                placeOrder();
+            }
+        });
+      }else{
+        placeOrder();
+      }
+ function placeOrder(){
     $.ajax({ 
       url:'/placeOrder',
       method: 'post',
@@ -459,7 +476,9 @@
         }
       }
     })
+  }
   })
+  
 
     function handlePayNowClick(order) {
       console.log(order,'%%%%%%%%%%%%%%%%')
