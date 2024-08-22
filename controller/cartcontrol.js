@@ -40,10 +40,6 @@ const viewCart = async (req, res) => {
     const coupon = "";
     const total = subtotal + gstAmount;
     req.session.totalPrice = total;
-    if (coupon) {
-      const couponValue = 50;
-      total -= couponValue;
-    }
     res.render("./user/cart", {
       username: username,
       product: cart.products,
