@@ -10,13 +10,16 @@ const viewCart = async (req, res) => {
     const email = req.session.email;
     const username = req.session.name;
     const user = await User.findOne({ email: email });
+
     if (!user) {
       return res.status(404).render("./error/404");
     }
+
     const userId = user._id;
     const cart = await Cart.findOne({ userId: userId }).populate(
       "products.productId"
     );
+
     if (!cart || cart.products.length === 0) {
       return res.render("./user/Cart", {
         username: username,
@@ -28,27 +31,29 @@ const viewCart = async (req, res) => {
         totalQuantity: 0,
       });
     }
+
     const product = cart.products;
     let subtotal = 0;
     let totalQuantity = 0;
+
     cart.products.forEach((item) => {
       subtotal += item.quantity * item.productId.descountedPrice;
       totalQuantity += item.quantity;
     });
+
     const gstRate = 0.02;
     const gstAmount = subtotal * gstRate;
+    let total = subtotal + gstAmount;
     const coupon = "";
-    const total = subtotal + gstAmount;
-    req.session.totalPrice = total;
-<<<<<<< HEAD
-    res.render("./user/cart", {
-=======
+
     if (coupon) {
-      const couponValue = 50;
+      const couponValue = 50; // Example coupon value
       total -= couponValue;
     }
+
+    req.session.totalPrice = total;
+
     res.render("./user/Cart", {
->>>>>>> c4d60b735eed3ac830a68fd159652d2b4c192edc
       username: username,
       product: cart.products,
       cart,
@@ -63,6 +68,7 @@ const viewCart = async (req, res) => {
     res.render("./error/404");
   }
 };
+
 
 const addToCart = async (req, res) => {
   try {
